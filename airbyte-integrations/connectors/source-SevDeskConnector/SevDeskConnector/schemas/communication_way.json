@@ -1,0 +1,117 @@
+{
+  "title": "CommunicationWay model",
+  "description": "Contact communication way model",
+  "required": [
+    "type",
+    "value",
+    "key"
+  ],
+  "properties": {
+    "id": {
+      "description": "The communication way id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The communication way object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of communication way creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last communication way update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "contact": {
+      "description": "The contact to which this communication way belongs.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the contact",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Contact'",
+          "type": "string",
+          "default": "Contact"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "type": {
+      "description": "Type of the communication way",
+      "type": "string",
+      "enum": [
+        "EMAIL",
+        "PHONE",
+        "WEB",
+        "MOBILE"
+      ],
+      "example": "EMAIL"
+    },
+    "value": {
+      "description": "The value of the communication way.<br>\r\n     For example the phone number, e-mail address or website.",
+      "type": "string"
+    },
+    "key": {
+      "description": "The key of the communication way.<br>\nSimilar to the category of addresses.<br>\nFor all communication way keys please send a GET to /CommunicationWayKey.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the key",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'CommunicationWayKey'",
+          "type": "string",
+          "example": "CommunicationWayKey"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "main": {
+      "description": "Defines whether the communication way is the main communication way for the contact.",
+      "type": "boolean",
+      "example": 0,
+      "nullable": true
+    },
+    "sevClient": {
+      "description": "Client to which communication way key belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

@@ -1,0 +1,180 @@
+{
+  "title": "VoucherPos model",
+  "description": "Voucher position model",
+  "required": [
+    "accountingType",
+    "voucher",
+    "taxRate",
+    "sumGross",
+    "sumNet",
+    "net"
+  ],
+  "properties": {
+    "id": {
+      "description": "The voucher position id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The voucher position object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of voucher position creation",
+      "type": "string",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last voucher position update",
+      "type": "string",
+      "readOnly": true
+    },
+    "sevClient": {
+      "description": "Client to which voucher position belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "voucher": {
+      "description": "The voucher to which the position belongs.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the voucher",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Voucher'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "accountingType": {
+      "description": "The accounting type to which the position belongs.<br>\r\n     An accounting type is the booking account to which the position belongs.<br>\r\n     For more information, please refer to\r\n     <a href='http://sevdesk.local/src/apiOverview/index.html#/doc-vouchers#otherResources'>this</a> section of our API-Overview.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the accounting type",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'AccountingType'",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "estimatedAccountingType": {
+      "description": "The accounting type to which the position belongs estimated by our voucher recognition.<br>\r\n    An accounting type is the booking account to which the position belongs.<br>\r\n    For more information, please refer to\r\n    <a href='http://sevdesk.local/src/apiOverview/index.html#/doc-vouchers#otherResources'>this</a> section of our API-Overview.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the accounting type",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'AccountingType'",
+          "type": "string",
+          "default": "AccountingType"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "taxRate": {
+      "description": "Tax rate of the voucher position.",
+      "type": "number",
+      "format": "float",
+      "example": 19
+    },
+    "sum": {
+      "description": "Sum of the voucher position.<br>\r\n     Is only regarded if 'sumNet' and 'sumGross' are not given.<br>\r\n     Whether net or gross is then determined by 'net' attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "net": {
+      "description": "Determines whether 'sumNet' or 'sumGross' is regarded.<br>\r\n     If both are not given, 'sum' is regarded and treated as net or gross depending on 'net'.",
+      "type": "boolean",
+      "example": "true"
+    },
+    "isAsset": {
+      "description": "Determines whether position is regarded as an asset which can be depreciated.",
+      "type": "boolean",
+      "example": "false"
+    },
+    "sumNet": {
+      "description": "Net sum of the voucher position.<br>\r\n    Only regarded if 'net' is 'true', otherwise its readOnly.",
+      "type": "number",
+      "format": "float",
+      "example": 100
+    },
+    "sumTax": {
+      "description": "Tax sum of the voucher position.",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    },
+    "sumGross": {
+      "description": "Gross sum of the voucher position.<br>\r\n    Only regarded if 'net' is 'false', otherwise its readOnly.",
+      "type": "number",
+      "format": "float",
+      "example": null
+    },
+    "sumNetAccounting": {
+      "description": "Net accounting sum. Is equal to sumNet.",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    },
+    "sumTaxAccounting": {
+      "description": "Tax accounting sum. Is equal to sumTax.",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    },
+    "sumGrossAccounting": {
+      "description": "Gross accounting sum. Is equal to sumGross.",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    },
+    "comment": {
+      "description": "Comment for the voucher position.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

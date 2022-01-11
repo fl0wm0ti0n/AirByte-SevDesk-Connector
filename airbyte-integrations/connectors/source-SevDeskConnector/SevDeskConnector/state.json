@@ -1,0 +1,14 @@
+{
+  "Voucher": { "create": "2021-05-05" },
+  "VoucherPos": { "create": "2021-05-05" },
+  "Contact": { "create": "2021-05-05" },
+  "ContactPos": { "create": "2021-05-05" },
+  "ContactAddress": { "create": "2021-05-05" },
+  "Invoice": { "create": "2021-05-05" },
+  "InvoicePos": { "create": "2021-05-05" },
+  "Order": { "create": "2021-05-05" },
+  "OrderPos": { "create": "2021-05-05" },
+  "Part": { "create": "2021-05-05" },
+  "AccountingContact": { "create": "2021-05-05" },
+  "CommunicationWay": { "create": "2021-05-05" }
+}

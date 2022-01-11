@@ -1,0 +1,631 @@
+{
+  "title": "Invoice model",
+  "description": "Invoice model",
+  "required": [
+    "invoiceDate",
+    "contact",
+    "discount",
+    "deliveryDate",
+    "status",
+    "smallSettlement",
+    "contactPerson",
+    "taxRate",
+    "taxText",
+    "taxType",
+    "invoiceType",
+    "currency"
+  ],
+  "properties": {
+    "id": {
+      "description": "The invoice id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The invoice object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "invoiceNumber": {
+      "description": "The invoice number",
+      "type": "string",
+      "example": "RE-1000",
+      "nullable": true
+    },
+    "contact": {
+      "description": "The contact used in the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the contact",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Contact'",
+          "type": "string",
+          "default": "Contact"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of invoice creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last invoice update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "sevClient": {
+      "description": "Client to which invoice belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string",
+          "default": "SevClient"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "invoiceDate": {
+      "description": "Needs to be provided as timestamp or dd.mm.yyyy",
+      "type": "string",
+      "example": "01.01.20",
+      "nullable": false
+    },
+    "header": {
+      "description": "Normally consist of prefix plus the invoice number",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "headText": {
+      "description": "Certain html tags can be used here to format your text",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "footText": {
+      "description": "Certain html tags can be used here to format your text",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "timeToPay": {
+      "description": "The time the customer has to pay the invoice in days",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "discountTime": {
+      "description": "If a value other than zero is used for the discount attribute,\r\n    you need to specify the amount of days for which the discount is granted.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "discount": {
+      "description": "If you want to give a discount, define the percentage here. Otherwise provide zero as value",
+      "type": "integer",
+      "default": 0,
+      "nullable": false
+    },
+    "addressName": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressStreet": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressZip": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressCity": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressCountry": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the country",
+          "type": "integer",
+          "deprecated": true
+        },
+        "objectName": {
+          "description": "Model name, which is 'StaticCountry'",
+          "type": "string",
+          "default": "StaticCountry",
+          "deprecated": true
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "payDate": {
+      "description": "Needs to be timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "createUser": {
+      "description": "Will be filled automatically by our system and can't be changed",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the user",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevUser'",
+          "type": "string",
+          "default": "SevUser"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "deliveryDate": {
+      "description": "Timestamp. This can also be a date range if you also use the attribute deliveryDateUntil",
+      "type": "string",
+      "format": "date-time",
+      "example": "01.01.20",
+      "nullable": false
+    },
+    "status": {
+      "description": "Please have a look in our\r\n     <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-invoices#types'>API-Overview</a>\r\n     to see what the different status codes mean",
+      "type": "integer",
+      "enum": [
+        50,
+        100,
+        200,
+        1000
+      ],
+      "example": 100,
+      "nullable": false
+    },
+    "smallSettlement": {
+      "description": "Defines if the client uses the small settlement scheme.\r\n    If yes, the invoice must not contain any vat",
+      "type": "boolean",
+      "example": 0,
+      "nullable": false
+    },
+    "contactPerson": {
+      "description": "The user who acts as a contact person for the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the user",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevUser'",
+          "type": "string",
+          "default": "SevUser"
+        }
+      },
+      "type": "object"
+    },
+    "taxRate": {
+      "description": "Is overwritten by invoice position tax rates",
+      "type": "number",
+      "format": "float",
+      "example": 19,
+      "nullable": false
+    },
+    "taxText": {
+      "description": "A common tax text would be 'Umsatzsteuer 19%'",
+      "type": "string",
+      "example": "Umsatzsteuer 19%",
+      "nullable": false
+    },
+    "dunningLevel": {
+      "description": "Defines how many reminders have already been sent for the invoice.\r\n    Starts with 1 (Payment reminder) and should be incremented by one every time another reminder is sent.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "addressParentName": {
+      "description": "Address parent name.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressContactRef": {
+      "description": "Address contact reference.",
+      "type": "object",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "taxType": {
+      "description": "Tax type of the invoice.\nThere are four tax types:\n1. default - Umsatzsteuer ausweisen\n2. eu - Steuerfreie innergemeinschaftliche Lieferung (Europ\u00e4ische Union)\n3. noteu - Steuerschuldnerschaft des Leistungsempf\u00e4ngers (au\u00dferhalb EU, z. B. Schweiz)\n4. custom - Using custom tax set\nTax rates are heavily connected to the tax type used.",
+      "type": "string",
+      "default": "default",
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom"
+      ],
+      "nullable": false
+    },
+    "paymentMethod": {
+      "description": "Payment method used for the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the payment method",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'PaymentMethod'",
+          "type": "string",
+          "default": "PaymentMethod"
+        }
+      },
+      "type": "object",
+      "default": null
+    },
+    "costCentre": {
+      "description": "Cost centre for the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the cost centre",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'CostCentre'",
+          "type": "string",
+          "default": "CostCentre"
+        }
+      },
+      "type": "object",
+      "default": null
+    },
+    "sendDate": {
+      "description": "The date the invoice was sent to the customer",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "origin": {
+      "description": "Origin of the invoice. Could f.e. be an order",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name. Could f.e. be 'Order''",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "invoiceType": {
+      "description": "Type of the invoice. For more information on the different types, check\r\n     <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-invoices#types'>this</a> section of\r\n     our API-Overview",
+      "type": "string",
+      "default": "RE",
+      "enum": [
+        "RE",
+        "WKR",
+        "SR",
+        "MA",
+        "TR",
+        "ER"
+      ],
+      "nullable": false
+    },
+    "accountIntervall": {
+      "description": "The interval in which recurring invoices are due as ISO-8601 duration.<br>\r\n     Necessary attribute for all recurring invoices.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "accountLastInvoice": {
+      "description": "Timestamp when the last invoice was generated by this recurring invoice.",
+      "type": "integer",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "accountNextInvoice": {
+      "description": "Timestamp when the next invoice will be generated by this recurring invoice.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "reminderTotal": {
+      "description": "Total reminder amount",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "reminderDebit": {
+      "description": "Debit of the reminder",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "reminderDeadline": {
+      "description": "Deadline of the reminder as timestamp",
+      "type": "integer",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "reminderCharge": {
+      "description": "The additional reminder charge",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "addressParentName2": {
+      "description": "Deprecated attribute",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressName2": {
+      "description": "Second name of the recipient",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "taxSet": {
+      "description": "Tax set of the invoice. Needs to be added if you chose the tax type custom",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'TaxSet'",
+          "type": "string",
+          "default": "TaxSet"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "addressGender": {
+      "description": "Gender of the recipient",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "accountEndDate": {
+      "description": "Deprecated attribute.",
+      "type": "integer",
+      "format": "date-time",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "address": {
+      "description": "Complete address of the recipient including name, street, city, zip and country.\r\n     * Line breaks can be used and will be displayed on the invoice pdf.",
+      "type": "string",
+      "nullable": true
+    },
+    "currency": {
+      "description": "Currency used in the invoice. Needs to be currency code according to ISO-4217",
+      "type": "string",
+      "default": "EUR",
+      "nullable": false
+    },
+    "sumNet": {
+      "description": "Net sum of the invoice",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTax": {
+      "description": "Tax sum of the invoice",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGross": {
+      "description": "Gross sum of the invoice",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscounts": {
+      "description": "Sum of all discounts in the invoice",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumNetForeignCurrency": {
+      "description": "Net sum of the invoice in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTaxForeignCurrency": {
+      "description": "Tax sum of the invoice in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGrossForeignCurrency": {
+      "description": "Gross sum of the invoice in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscountsForeignCurrency": {
+      "description": "Discounts sum of the invoice in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumNetAccounting": {
+      "description": "Net accounting sum of the invoice. Is usually the same as sumNet",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTaxAccounting": {
+      "description": "Tax accounting sum of the invoice. Is usually the same as sumTax",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGrossAccounting": {
+      "description": "Gross accounting sum of the invoice. Is usually the same as sumGross",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "paidAmount": {
+      "description": "Amount which has already been paid for this invoice by the customer",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "entryType": {
+      "description": "Deprecated attribute.",
+      "type": "object",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "customerInternalNote": {
+      "description": "Internal note of the customer. Contains data entered into field 'Referenz/Bestellnummer'",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "showNet": {
+      "description": "If true, the net amount of each position will be shown on the invoice. Otherwise gross amount",
+      "type": "boolean",
+      "default": "1",
+      "nullable": false
+    },
+    "enshrined": {
+      "description": "Defines if and when invoice was enshrined. Enshrined invoices can not be manipulated.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "sendType": {
+      "description": "Type which was used to send the invoice. IMPORTANT: Please refer to the invoice section of the\r\n     *     API-Overview to understand how this attribute can be used before using it!",
+      "type": "string",
+      "default": null,
+      "enum": [
+        "VPR",
+        "VPDF",
+        "VM",
+        "VP"
+      ],
+      "nullable": true
+    },
+    "deliveryDateUntil": {
+      "description": "If the delivery date should be a time range, another timestamp can be provided in this attribute\r\n     * to define a range from timestamp used in deliveryDate attribute to the timestamp used here.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "datevConnectOnline": {
+      "description": "Internal attribute",
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "sendPaymentReceivedNotificationDate": {
+      "description": "Internal attribute",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

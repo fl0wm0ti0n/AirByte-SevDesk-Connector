@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SevDeskConnector": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

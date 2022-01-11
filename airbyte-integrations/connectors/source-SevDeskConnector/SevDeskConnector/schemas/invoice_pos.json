@@ -1,0 +1,249 @@
+{
+  "title": "Invoice position model",
+  "description": "Invoice position model",
+  "required": [
+    "invoice",
+    "unity",
+    "taxRate"
+  ],
+  "properties": {
+    "id": {
+      "description": "The invoice position id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The invoice position object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of invoice position creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last invoice position update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "invoice": {
+      "description": "The invoice to which the position belongs.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the invoice",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Invoice'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "part": {
+      "description": "Part from your inventory which is used in the position.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the part",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Part'",
+          "type": "string",
+          "default": "Part"
+        }
+      },
+      "type": "object"
+    },
+    "quantity": {
+      "description": "Quantity of the article/part",
+      "type": "number",
+      "format": "float",
+      "example": 1,
+      "nullable": true
+    },
+    "price": {
+      "description": "Price of the article/part. Is either gross or net, depending on the sevDesk account setting.",
+      "type": "number",
+      "format": "float",
+      "example": 100,
+      "nullable": true
+    },
+    "name": {
+      "description": "Name of the article/part.",
+      "type": "number",
+      "format": "float",
+      "example": "Dragonglass",
+      "nullable": true
+    },
+    "priority": {
+      "description": "Priority of the position.",
+      "type": "integer",
+      "default": 100,
+      "nullable": false,
+      "deprecated": true
+    },
+    "unity": {
+      "description": "The unit in which the positions part is measured",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the unit",
+          "type": "integer",
+          "example": 1
+        },
+        "objectName": {
+          "description": "Model name, which is 'Unity'",
+          "type": "string",
+          "default": "Unity"
+        }
+      },
+      "type": "object"
+    },
+    "sevClient": {
+      "description": "Client to which invoice position belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string",
+          "default": "SevClient"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "positionNumber": {
+      "description": "Position number of your position. Can be used to order multiple positions.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "text": {
+      "description": "A text describing your position.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "discount": {
+      "description": "An optional discount of the position.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "taxRate": {
+      "description": "Tax rate of the position.",
+      "type": "number",
+      "format": "float",
+      "example": 19,
+      "nullable": false
+    },
+    "temporary": {
+      "description": "Defines if the position is temporary",
+      "type": "boolean",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "sumNet": {
+      "description": "Net sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "sumGross": {
+      "description": "Gross sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "sumDiscount": {
+      "description": "Discount sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "sumTax": {
+      "description": "Tax sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false,
+      "deprecated": true
+    },
+    "sumNetAccounting": {
+      "description": "Net accounting sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "sumTaxAccounting": {
+      "description": "Tax accounting sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "sumGrossAccounting": {
+      "description": "Gross accounting sum of the position",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "priceNet": {
+      "description": "Net price of the part",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "priceGross": {
+      "description": "Gross price of the part",
+      "type": "number",
+      "format": "float",
+      "example": 100,
+      "nullable": true
+    },
+    "priceTax": {
+      "description": "Tax on the price of the part",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}
