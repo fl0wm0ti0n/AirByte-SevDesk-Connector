@@ -45,6 +45,21 @@
         "type": "string",
         "description": "api Endpoint like 'Voucher' from 'https://my.sevdesk.de/api/v1/Voucher'",
         "examples": [ "Voucher", "Order" ]
+      },
+      "query_limit": {
+        "type": "integer",
+        "description": "Limits the number of entries that are returned.Most useful in GET requests which will most likely deliver big sets of data like country or currency lists. In this case, you can bypass the default limitation on returned entries by providing a high number.",
+        "examples": [ "0", "100" ]
+      },
+      "query_embedded": {
+        "type": "integer",
+        "description": "Will extend some of the returned data.",
+        "examples": [ "0", "1" ]
+      },
+      "query_offset": {
+        "type": "integer",
+        "description": "Specifies a certain offset for the data that will be returned. As an example, you can specify 'offset=2 if you want all entries except for the first two.",
+        "examples": [ "0", "100" ]
       }
     }
   }
