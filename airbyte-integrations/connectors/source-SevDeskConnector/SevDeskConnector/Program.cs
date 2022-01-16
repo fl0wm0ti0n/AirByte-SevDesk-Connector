@@ -54,23 +54,23 @@ namespace SevDeskConnector
         /// <returns></returns>
         public override Stream[] Streams(JsonElement config)
         {
-            Dictionary<string, DateTime> currentstate = new Dictionary<string, DateTime>();
+            //Dictionary<string, DateTime> currentstate = new Dictionary<string, DateTime>();
 
             string? urlBase = config.GetProperty("base_url").GetString();
-            //int backOffTime = config.GetProperty("back_off_time").GetInt32();
+            int backOffTime = config.GetProperty("back_off_time").GetInt32();
             //int checkPointInterval = config.GetProperty("checkpoint_interval").GetInt32();
-            //int maxRetries = config.GetProperty("max_retries").GetInt32();
-            //string? apiToken = config.GetProperty("api_token").GetString();
+            int maxRetries = config.GetProperty("max_retries").GetInt32();
+            string? apiToken = config.GetProperty("api_token").GetString();
             //int queryLimit = config.GetProperty("query_limit").GetInt32();
             //int queryEmbedded = config.GetProperty("query_embedded").GetInt32();
             //int queryOffset = config.GetProperty("query_offset").GetInt32();
 
-            var baseImpl = urlBase.HttpStream().ParseResponseObject("$");
-                //.BackoffTime((i, _) => TimeSpan.FromMinutes(i * backOffTime))
+            var baseImpl = urlBase.HttpStream().ParseResponseObject("$")
+                .BackoffTime((i, _) => TimeSpan.FromMinutes(i * backOffTime))
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
-                //.HttpMethod(HttpMethod.Get)
+                .HttpMethod(HttpMethod.Get)
                 //.StateCheckpointInterval(checkPointInterval)
-                //.MaxRetries(maxRetries);
+                .MaxRetries(maxRetries)
                 //.CursorField(new[] { "create" })
                 //.WithAuth(new BasicAuth(new[] { apiToken }))
                 //.RequestParams(_,_,);
@@ -95,47 +95,47 @@ namespace SevDeskConnector
                 //        queryOffset
                 //    }
                 //})
-                //.RequestParams((_, _, _) => new Dictionary<string, object>
-                //{
-                //    {
-                //        "token",
-                //        apiToken
-                //    }
-                //});
+                .RequestParams((_, _, _) => new Dictionary<string, object>
+                {
+                    {
+                        "token",
+                        apiToken
+                    }
+                });
 
             //###################################################
             //### Stream for Vouchers 
             //###################################################
-            var voucherImpl = baseImpl
-                //.Path((_, _, _) => "Voucher")
-                .Create("Voucher");
+            //var voucherImpl = baseImpl
+            //    //.Path((_, _, _) => "Voucher")
+            //    .Create("Voucher");
 
             ////###################################################
             ////### Stream for VoucherPoses
             ////###################################################
             //var voucherPosImpl = baseImpl
-            //    .Path((_, _, _) => "VoucherPos")
+            //    //.Path((_, _, _) => "VoucherPos")
             //    .Create("VoucherPos");
 
             ////###################################################
             ////### Stream for Invoices 
             ////###################################################
-            //var invoiceImpl = baseImpl
-            //    .Path((_, _, _) => "Invoice")
-            //    .Create("Invoice");
+            var invoiceImpl = baseImpl
+                .Path((_, _, _) => "Invoice")
+                .Create("Invoice");
 
             ////###################################################
             ////### Stream for InvoicePoses
             ////###################################################
             //var invoicePosImpl = baseImpl
-            //    .Path((_, _, _) => "InvoicePos")
+            //    //.Path((_, _, _) => "InvoicePos")
             //    .Create("InvoicePos");
 
             ////###################################################
             ////### Stream for Contacts 
             ////###################################################
             //var contactImpl = baseImpl
-            //    .Path((_, _, _) => "Contact")
+            //    //.Path((_, _, _) => "Contact")
             //    .Create("Contact");
 
             ////###################################################
@@ -190,9 +190,9 @@ namespace SevDeskConnector
 
             return new Stream[]
             {
-                voucherImpl
+                //voucherImpl
                 //voucherPosImpl,
-                //invoiceImpl,
+                invoiceImpl
                 //invoicePosImpl,
                 //contactImpl,
                 //contactAddressImpl,
