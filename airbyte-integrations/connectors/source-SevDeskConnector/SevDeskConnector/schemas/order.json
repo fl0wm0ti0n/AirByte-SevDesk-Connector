@@ -1,6 +1,4 @@
 {
-  "title": "Order model",
-  "description": "Order model",
   "required": [
     "orderNumber",
     "orderDate",
@@ -206,26 +204,6 @@
       "default": null,
       "nullable": true
     },
-    "origin": {
-      "description": "Object from which the order was created. For example an offer.",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the object",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name of the object. Could be 'Order'.",
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "default": null,
-      "nullable": true
-    },
     "version": {
       "description": "Version of the order.<br>\r\n    Can be used if you have multiple drafts for the same order.<br>\r\n    Should start with 0",
       "type": "integer",
@@ -293,13 +271,6 @@
     "addressParentName": {
       "description": "Address parent name.",
       "type": "string",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
-    },
-    "addressContactRef": {
-      "description": "Address contact reference.",
-      "type": "object",
       "default": null,
       "nullable": true,
       "deprecated": true
@@ -424,13 +395,6 @@
       "default": 0,
       "nullable": false
     },
-    "entryType": {
-      "description": "Deprecated attribute.",
-      "type": "object",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
-    },
     "customerInternalNote": {
       "description": "Internal note of the customer. Contains data entered into field 'Referenz/Bestellnummer'",
       "type": "string",
@@ -457,5 +421,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

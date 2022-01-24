@@ -1,6 +1,4 @@
 {
-  "title": "Email model",
-  "description": "Email model",
   "required": [
     "from",
     "to",
@@ -88,24 +86,8 @@
       },
       "type": "object",
       "readOnly": true
-    },
-    "cc": {
-      "description": "A list of mail addresses which are in the cc",
-      "type": "string",
-      "nullable": true
-    },
-    "bcc": {
-      "description": "A list of mail addresses which are in the bcc",
-      "type": "string",
-      "nullable": true
-    },
-    "arrived": {
-      "description": "Date the mail arrived",
-      "type": "string",
-      "format": "date-time",
-      "nullable": true
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

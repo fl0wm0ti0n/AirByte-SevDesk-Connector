@@ -16,6 +16,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
   </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Airbyte.Cdk\Airbyte.Cdk.csproj" />
+    </ItemGroup>
+    <ItemGroup>
       <None Update="config.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
@@ -23,6 +26,12 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="configured_catalog.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="schemas_original\email.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="schemas_integer\invoice.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas\accounting_contact.json">
@@ -40,16 +49,28 @@
       <None Update="schemas\email.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="schemas_online_generated\email.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="schemas_original\invoice.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="schemas\invoice.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas\invoice_pos.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="schemas_original\order.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="schemas\order.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas\order_pos.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="schemas_original\part.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas\part.json">
@@ -67,6 +88,10 @@
       <None Update="state.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="_configured_catalog.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
+    <ProjectExtensions><VisualStudio><UserProperties _3configured_3catalog_1json__JsonSchema="https://json-schema.org/draft-04/schema" configured_3catalog_1json__JsonSchema="https://json-schema.org/draft-04/schema" schemas_4invoice_1json__JsonSchema="https://json-schema.org/draft-04/schema" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -1,6 +1,4 @@
 {
-  "title": "Order position model",
-  "description": "Order position model",
   "required": [
     "order",
     "unity",
@@ -45,25 +43,6 @@
           "description": "Model name, which is 'Order'",
           "type": "string",
           "default": "Order"
-        }
-      },
-      "type": "object"
-    },
-    "part": {
-      "description": "Part from your inventory which is used in the position.",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the part",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name, which is 'Part'",
-          "type": "string",
-          "default": "Part"
         }
       },
       "type": "object"
@@ -221,5 +200,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

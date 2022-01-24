@@ -1,6 +1,4 @@
 {
-  "title": "Part model",
-  "description": "Part model",
   "required": [
     "taxRate",
     "unity",
@@ -91,7 +89,7 @@
         "id": {
           "description": "Unique identifier of the unit",
           "type": "integer",
-          "example": 1
+          "example": "1"
         },
         "objectName": {
           "description": "Model name, which is 'Unity'",
@@ -122,30 +120,8 @@
       "type": "number",
       "format": "float",
       "default": null,
-      "example": 100,
+      "example": "100",
       "nullable": true
-    },
-    "secondUnity": {
-      "description": "An additional unit in which the part is measured",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the unit",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name, which is 'Unity'",
-          "type": "string",
-          "default": "Unity"
-        }
-      },
-      "type": "object",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
     },
     "secondUnityFactor": {
       "description": "Factor of the additional unit",
@@ -179,14 +155,14 @@
       "type": "number",
       "format": "float",
       "default": null,
-      "example": 50,
+      "example": "50",
       "nullable": true
     },
     "taxRate": {
       "description": "Tax rate of the part",
       "type": "number",
       "format": "float",
-      "example": 19
+      "example": "19"
     },
     "image": {
       "description": "Image of the part",
@@ -198,10 +174,10 @@
     "status": {
       "description": "Status of the part. 50 <-> Inactive - 100 <-> Active",
       "type": "integer",
-      "default": 100,
+      "default": "100",
       "enum": [
-        50,
-        100
+        "50",
+        "100"
       ],
       "nullable": true
     },
@@ -210,20 +186,6 @@
       "type": "string",
       "default": null,
       "nullable": true
-    },
-    "entryType": {
-      "description": "Deprecated attribute.",
-      "type": "object",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
-    },
-    "accountingType": {
-      "description": "Deprecated attribute.",
-      "type": "object",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
     },
     "priceNet": {
       "description": "Net price of the part",
@@ -239,5 +201,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

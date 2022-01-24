@@ -1,6 +1,4 @@
 {
-  "title": "AccountingContact model",
-  "description": "Accounting contact model",
   "required": [
     "contact"
   ],
@@ -89,5 +87,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

@@ -1,6 +1,4 @@
 {
-  "title": "Invoice position model",
-  "description": "Invoice position model",
   "required": [
     "invoice",
     "unity",
@@ -50,37 +48,18 @@
       "type": "object",
       "readOnly": true
     },
-    "part": {
-      "description": "Part from your inventory which is used in the position.",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the part",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name, which is 'Part'",
-          "type": "string",
-          "default": "Part"
-        }
-      },
-      "type": "object"
-    },
     "quantity": {
       "description": "Quantity of the article/part",
       "type": "number",
       "format": "float",
-      "example": 1,
+      "example": "1",
       "nullable": true
     },
     "price": {
       "description": "Price of the article/part. Is either gross or net, depending on the sevDesk account setting.",
       "type": "number",
       "format": "float",
-      "example": 100,
+      "example": "100",
       "nullable": true
     },
     "name": {
@@ -93,7 +72,7 @@
     "priority": {
       "description": "Priority of the position.",
       "type": "integer",
-      "default": 100,
+      "default": "100",
       "nullable": false,
       "deprecated": true
     },
@@ -107,7 +86,7 @@
         "id": {
           "description": "Unique identifier of the unit",
           "type": "integer",
-          "example": 1
+          "example": "1"
         },
         "objectName": {
           "description": "Model name, which is 'Unity'",
@@ -160,7 +139,7 @@
       "description": "Tax rate of the position.",
       "type": "number",
       "format": "float",
-      "example": 19,
+      "example": "19",
       "nullable": false
     },
     "temporary": {
@@ -233,7 +212,7 @@
       "description": "Gross price of the part",
       "type": "number",
       "format": "float",
-      "example": 100,
+      "example": "100",
       "nullable": true
     },
     "priceTax": {
@@ -245,5 +224,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

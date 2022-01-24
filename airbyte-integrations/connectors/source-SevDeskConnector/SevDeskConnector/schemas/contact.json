@@ -1,6 +1,4 @@
 {
-  "title": "Contact model",
-  "description": "Contact model",
   "required": [
     "category"
   ],
@@ -40,26 +38,6 @@
       "type": "string",
       "default": null,
       "example": "Customer-1337",
-      "nullable": true
-    },
-    "parent": {
-      "description": "The parent contact to which this contact belongs. Must be an organization.",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the parent contact",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name, which is 'Contact'",
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "default": null,
       "nullable": true
     },
     "surename": {
@@ -222,26 +200,6 @@
         "noteu",
         "custom"
       ],
-      "nullable": true
-    },
-    "taxSet": {
-      "description": "Tax set which is used in every invoice of the contact.",
-      "required": [
-        "id",
-        "objectName"
-      ],
-      "properties": {
-        "id": {
-          "description": "Unique identifier of the tax set",
-          "type": "integer"
-        },
-        "objectName": {
-          "description": "Model name, which is 'TaxSet'",
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "default": null,
       "nullable": true
     },
     "defaultDiscountAmount": {

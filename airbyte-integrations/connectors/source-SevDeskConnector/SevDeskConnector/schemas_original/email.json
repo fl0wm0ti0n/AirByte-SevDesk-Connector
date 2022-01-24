@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Email model",
+  "required": [
+    "from",
+    "to",
+    "subject"
+  ],
+  "properties": {
+    "id": {
+      "description": "The email id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The email object name",
+      "type": "string",
+      "readOnly": true, 
+      "nullable": false
+    },
+    "additionalInformation": {
+      "description": "additionalInformation",
+      "type": "string",
+      "nullable": true
+    },
+    "create": {
+      "description": "Date of mail creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last mail update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "object": {
+      "description": "The contact used in the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Invoice' or 'Order' or 'CreditNote'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "nullable": true
+    },
+    "from": {
+      "description": "The sender of the email",
+      "type": "string",
+      "nullable": false
+    },
+    "to": {
+      "description": "The recipient of the email",
+      "type": "string",
+      "nullable": false
+    },
+    "subject": {
+      "description": "The subject of the email",
+      "type": "string",
+      "nullable": false
+    },
+    "text": {
+      "description": "The text of the email",
+      "type": "string",
+      "nullable": true
+    },
+    "sevClient": {
+      "description": "Client to which mail belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    }
+  },
+  "type": "object"
+}

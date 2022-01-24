@@ -1,6 +1,4 @@
 {
-  "title": "CommunicationWay model",
-  "description": "Contact communication way model",
   "required": [
     "type",
     "value",
@@ -113,5 +111,5 @@
     }
   },
   "type": "object",
-  "$schema": "http://json-schema.org/schema#"
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }
