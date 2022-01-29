@@ -1,0 +1,205 @@
+{
+  "required": [
+    "taxRate",
+    "unity",
+    "stock",
+    "name",
+    "partNumber"
+  ],
+  "properties": {
+    "id": {
+      "description": "The part id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The part object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of part creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last part update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "name": {
+      "description": "Name of the part",
+      "type": "string",
+      "example": "Dragonglass"
+    },
+    "partNumber": {
+      "description": "The part number",
+      "type": "string",
+      "example": "Part-1000"
+    },
+    "text": {
+      "description": "A text describing the part",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "category": {
+      "description": "Category of the part.<br>\r\n    For all categories, send a GET to /Category?objectType=Part",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the category",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Category'",
+          "type": "string",
+          "default": "Category"
+        }
+      },
+      "type": "object",
+      "nullable": true
+    },
+    "stock": {
+      "description": "The stock of the part",
+      "type": "number",
+      "format": "float",
+      "example": 10000
+    },
+    "stockEnabled": {
+      "description": "Defines if the stock should be enabled",
+      "type": "boolean",
+      "default": 1,
+      "nullable": false
+    },
+    "unity": {
+      "description": "The unit in which the part is measured",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the unit",
+          "type": "integer",
+          "example": "1"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Unity'",
+          "type": "string",
+          "default": "Unity"
+        }
+      },
+      "type": "object"
+    },
+    "pricePartner": {
+      "description": "Price for a partner",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "priceCustomer": {
+      "description": "Price for a customer",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "price": {
+      "description": "Price for which the part is sold",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "example": "100",
+      "nullable": true
+    },
+    "secondUnityFactor": {
+      "description": "Factor of the additional unit",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "sevClient": {
+      "description": "Client to which part belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "pricePurchase": {
+      "description": "Purchase price of the part",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "example": "50",
+      "nullable": true
+    },
+    "taxRate": {
+      "description": "Tax rate of the part",
+      "type": "number",
+      "format": "float",
+      "example": "19"
+    },
+    "image": {
+      "description": "Image of the part",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "status": {
+      "description": "Status of the part. 50 <-> Inactive - 100 <-> Active",
+      "type": "integer",
+      "default": "100",
+      "enum": [
+        "50",
+        "100"
+      ],
+      "nullable": true
+    },
+    "internalComment": {
+      "description": "An internal comment for the part.<br>\r\n     Does not appear on invoices and orders.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "priceNet": {
+      "description": "Net price of the part",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    },
+    "priceGross": {
+      "description": "Gross price of the part",
+      "type": "number",
+      "format": "float",
+      "readOnly": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -2,7 +2,7 @@
   "profiles": {
     "SevDeskConnector": {
       "commandName": "Project",
-      "commandLineArgs": "read -c read --config config.json --catalog configured_catalog.json",
+      "commandLineArgs": "read -c read --config config.json --catalog configured_catalog_email.json",
       "workingDirectory": "C:\\flowGit\\c-sharp-projects\\artichoke-airbyte-connector\\airbyte.cdk.dotnet\\airbyte-integrations\\connectors\\source-SevDeskConnector\\SevDeskConnector\\bin\\Debug\\net6.0\\",
       "environmentVariables": {
         "AIRBYTE_IMPL_PATH": "C:\\flowGit\\c-sharp-projects\\artichoke-airbyte-connector\\airbyte.cdk.dotnet\\airbyte-integrations\\connectors\\source-SevDeskConnector\\SevDeskConnector\\bin\\Debug\\net6.0\\SevDeskConnector.dll",

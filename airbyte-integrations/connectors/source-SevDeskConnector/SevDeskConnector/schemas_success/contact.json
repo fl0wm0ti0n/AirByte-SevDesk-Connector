@@ -1,0 +1,221 @@
+{
+  "required": [
+    "category"
+  ],
+  "properties": {
+    "id": {
+      "description": "The contact id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The contact object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of contact creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last contact update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "name": {
+      "description": "The organization name.<br>\nBe aware that the type of contact will depend on this attribute.<br>\nIf it holds a value, the contact will be regarded as an organization.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "customerNumber": {
+      "description": "The customer number",
+      "type": "string",
+      "default": null,
+      "example": "Customer-1337",
+      "nullable": true
+    },
+    "surename": {
+      "description": "The <b>first</b> name of the contact.<br>\nYeah... not quite right in literally every way. We know.<br>\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "example": "John",
+      "nullable": true
+    },
+    "familyname": {
+      "description": "The last name of the contact.<br>\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "example": "Snow",
+      "nullable": true
+    },
+    "titel": {
+      "description": "A non-academic title for the contact.\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "example": "Commander",
+      "nullable": true
+    },
+    "category": {
+      "description": "Category of the contact.<br> For more information,\r\n     see <a href='https://my.sevdesk.de/apiOverview/index.html#/doc-contacts#types'>here</a>.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the category",
+          "type": "integer",
+          "example": 3
+        },
+        "objectName": {
+          "description": "Model name, which is 'Category'",
+          "type": "string",
+          "default": "Category"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "description": {
+      "description": "A description for the contact.",
+      "type": "string",
+      "default": null,
+      "example": "Rightful king of the seven kingdoms",
+      "nullable": true
+    },
+    "academicTitle": {
+      "description": "A academic title for the contact.\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "gender": {
+      "description": "Gender of the contact.<br>\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "sevClient": {
+      "description": "Client to which contact belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "name2": {
+      "description": "Second name of the contact.<br>\nNot to be used for organizations.",
+      "type": "string",
+      "default": null,
+      "example": "Targaryen",
+      "nullable": true
+    },
+    "birthday": {
+      "description": "Birthday of the contact.<br>\nNot to be used for organizations.",
+      "type": "string",
+      "format": "date",
+      "default": null,
+      "nullable": true
+    },
+    "vatNumber": {
+      "description": "Vat number of the contact.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "bankAccount": {
+      "description": "Bank account number (IBAN) of the contact.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "bankNumber": {
+      "description": "Bank number of the bank used by the contact.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "defaultCashbackTime": {
+      "description": "Absolute time in days which the contact has to pay his invoices and subsequently get a cashback.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "defaultCashbackPercent": {
+      "description": "Percentage of the invoice sum the contact gets back if he payed invoices in time.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "defaultTimeToPay": {
+      "description": "The payment goal in days which is set for every invoice of the contact.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "taxNumber": {
+      "description": "The tax number of the contact.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "taxOffice": {
+      "description": "The tax office responsible for the contact.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "exemptVat": {
+      "description": "Defines if the contact is freed from paying vat.",
+      "type": "boolean",
+      "default": null,
+      "nullable": true
+    },
+    "taxType": {
+      "description": "Defines which tax regulation the contact is using.",
+      "type": "string",
+      "default": null,
+      "enum": [
+        "default",
+        "eu",
+        "noteu",
+        "custom"
+      ],
+      "nullable": true
+    },
+    "defaultDiscountAmount": {
+      "description": "The default discount the contact gets for every invoice.<br>\nDepending on defaultDiscountPercentage attribute, in percent or absolute value.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true
+    },
+    "defaultDiscountPercentage": {
+      "description": "Defines if the discount is a percentage (true) or an absolute value (false).",
+      "type": "boolean",
+      "default": null,
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

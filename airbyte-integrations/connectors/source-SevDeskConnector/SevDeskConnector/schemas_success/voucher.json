@@ -1,0 +1,486 @@
+{
+  "required": [
+    "creditDebit",
+    "taxType",
+    "status",
+    "voucherType"
+  ],
+  "properties": {
+    "id": {
+      "description": "The voucher id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The voucher object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of voucher creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last voucher update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "sevClient": {
+      "description": "Client to which voucher belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "createUser": {
+      "description": "User who created the voucher. Will be filled automatically.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the user",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevUser'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "voucherDate": {
+      "description": "Needs to be provided as timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "example": "01.01.2020",
+      "nullable": true
+    },
+    "supplier": {
+      "description": "The contact used in the voucher as a supplier.<br>\nIf you don't have a contact as a supplier, you can set this object to null.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the contact",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Contact'",
+          "type": "string",
+          "default": "Contact"
+        }
+      },
+      "type": "object",
+      "nullable": true
+    },
+    "supplierName": {
+      "description": "The supplier name.<br>\r\n     The value you provide here will determine what supplier name is shown for the voucher in case you did not provide a supplier.",
+      "type": "string",
+      "default": null,
+      "example": "John Snow",
+      "nullable": true
+    },
+    "description": {
+      "description": "The description of the voucher. Essentially the voucher number.",
+      "type": "string",
+      "default": null,
+      "example": "Voucher-1000",
+      "nullable": true
+    },
+    "document": {
+      "description": "The document of the voucher.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the document",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Document'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "resultDisdar": {
+      "description": "Internal attribute.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "documentPreview": {
+      "description": "The document preview of the voucher.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the document",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Document'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "payDate": {
+      "description": "Needs to be timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "status": {
+      "description": "Please have a look in our\r\n    <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-vouchers#types'>API-Overview</a>\r\n    to see what the different status codes mean",
+      "type": "integer",
+      "enum": [
+        50,
+        100,
+        1000
+      ],
+      "example": 50,
+      "nullable": false
+    },
+    "sumNet": {
+      "description": "Net sum of the voucher",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTax": {
+      "description": "Tax sum of the voucher",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGross": {
+      "description": "Gross sum of the voucher",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumNetAccounting": {
+      "description": "Net accounting sum of the voucher. Is usually the same as sumNet",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTaxAccounting": {
+      "description": "Tax accounting sum of the voucher. Is usually the same as sumTax",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGrossAccounting": {
+      "description": "Gross accounting sum of the voucher. Is usually the same as sumGross",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscounts": {
+      "description": "Sum of all discounts in the voucher",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscountsForeignCurrency": {
+      "description": "Discounts sum of the voucher in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "showNet": {
+      "description": "If true, the net amount of each position will be regarded. Otherwise gross amount",
+      "type": "boolean",
+      "default": "1",
+      "nullable": false,
+      "deprecated": true
+    },
+    "paidAmount": {
+      "description": "Amount which has already been paid for this voucher by the customer",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": true
+    },
+    "taxType": {
+      "description": "Tax type of the voucher.\nThere are four tax types:\n1. default - Umsatzsteuer ausweisen\n2. eu - Steuerfreie innergemeinschaftliche Lieferung (Europ\u00e4ische Union)\n3. noteu - Steuerschuldnerschaft des Leistungsempf\u00e4ngers (au\u00dferhalb EU, z. B. Schweiz)\n4. custom - Using custom tax set\nTax rates are heavily connected to the tax type used.",
+      "type": "string",
+      "default": "default",
+      "nullable": false
+    },
+    "creditDebit": {
+      "description": "Defines if your voucher is a credit (C) or debit (D)",
+      "type": "string",
+      "enum": [
+        "C",
+        "D"
+      ],
+      "example": "C",
+      "nullable": false
+    },
+    "hidden": {
+      "description": "Defines if your voucher is hidden",
+      "type": "boolean",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "costCentre": {
+      "description": "Cost centre for the voucher",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the cost centre",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'CostCentre'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null
+    },
+    "voucherType": {
+      "description": "Type of the voucher. For more information on the different types, check\r\n     <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-vouchers#types'>this</a> section of\r\n     our API-Overview",
+      "type": "string",
+      "enum": [
+        "VOU",
+        "RV"
+      ],
+      "example": "VOU",
+      "nullable": false
+    },
+    "recurringIntervall": {
+      "description": "The interval in months in which recurring vouchers are generated.<br>\r\n     Necessary attribute for all recurring vouchers.",
+      "type": "integer",
+      "default": null,
+      "enum": [
+        "1",
+        "3",
+        "6",
+        "12",
+        "24",
+        "36",
+        "48",
+        "60"
+      ],
+      "nullable": true,
+      "deprecated": true
+    },
+    "recurringInterval": {
+      "description": "The DateInterval in which recurring vouchers are generated.<br>\r\n     Necessary attribute for all recurring vouchers.",
+      "type": "string",
+      "default": null,
+      "enum": [
+        "P0Y0M1W",
+        "P0Y0M2W",
+        "P0Y1M0W",
+        "P0Y3M0W",
+        "P0Y6M0W",
+        "P1Y0M0W",
+        "P2Y0M0W",
+        "P3Y0M0W",
+        "P4Y0M0W",
+        "P5Y0M0W"
+      ],
+      "nullable": true
+    },
+    "recurringStartDate": {
+      "description": "The date when the recurring vouchers start being generated.<br>\r\n     Necessary attribute for all recurring vouchers.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "recurringNextVoucher": {
+      "description": "The date when the next voucher should be generated.<br>\r\n     Necessary attribute for all recurring vouchers.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "recurringLastVoucher": {
+      "description": "The date when the last voucher was generated.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "recurringEndDate": {
+      "description": "The date when the recurring vouchers end being generated.<br>\r\n    Necessary attribute for all recurring vouchers.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "enshrined": {
+      "description": "Defines if and when voucher was enshrined. Enshrined vouchers can not be manipulated.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "inSource": {
+      "description": "Deprecated attribute.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "taxSet": {
+      "description": "Tax set of the voucher. Needs to be added if you chose the tax type custom",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'TaxSet'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "iban": {
+      "description": "Deprecated attribute.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "accountingSpecialCase": {
+      "description": "Deprecated attribute.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "paymentDeadline": {
+      "description": "Payment deadline of the voucher.",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "tip": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "mileageRate": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "selectedForPaymentFile": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "supplierNameAtSave": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "taxmaroStockAccount": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "vatNumber": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "deliveryDate": {
+      "description": "Needs to be provided as timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "default": "02.01.2020",
+      "example": "01.01.2020",
+      "nullable": false
+    },
+    "deliveryDateUntil": {
+      "description": "Needs to be provided as timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "example": "01.01.2020",
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

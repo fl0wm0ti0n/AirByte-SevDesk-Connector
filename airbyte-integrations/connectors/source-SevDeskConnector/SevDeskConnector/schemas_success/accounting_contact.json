@@ -1,0 +1,91 @@
+{
+  "required": [
+    "contact"
+  ],
+  "properties": {
+    "id": {
+      "description": "The accounting contact id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The accounting contact object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of accounting contact creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last accounting contact update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "contact": {
+      "description": "The contact to which this accounting contact belongs.",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the contact",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Contact'",
+          "type": "string",
+          "default": "Contact"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "contactName": {
+      "description": "Name of the contact to which this accounting contact belongs.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "sevClient": {
+      "description": "Client to which accounting contact belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "debitorNumber": {
+      "description": "Debitor number of the accounting contact.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    },
+    "creditorNumber": {
+      "description": "Creditor number of the accounting contact.",
+      "type": "integer",
+      "default": null,
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

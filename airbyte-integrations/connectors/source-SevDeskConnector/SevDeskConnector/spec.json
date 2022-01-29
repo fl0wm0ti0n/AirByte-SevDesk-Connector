@@ -21,45 +21,59 @@
       "base_url": {
         "type": "string",
         "description": "API Token you got from SevDesk",
+        "default": "https://my.sevdesk.de/api/v1/",
         "examples": [ "https://my.sevdesk.de/api/v1/" ]
       },
       "back_off_time": {
         "type": "integer",
         "description": "Backofftime, default 10.",
         "pattern": "^[0-9]{2}$",
+        "default": "10",
         "examples": [ "10" ]
       },
       "checkpoint_interval": {
         "type": "integer",
         "description": "The AirbyteStateMessage is sent based on the StateCheckpointInterval setting of a stream object. Every N number of requests will result in sending out an AirbyteStateMessage",
         "pattern": "^[0-9]{2}$",
+        "default": "25",
         "examples": [ "25" ]
       },
       "max_retries": {
         "type": "integer",
         "description": "Maximal retries before it stops",
         "pattern": "^[0-9]{2}$",
+        "default": "15",
         "examples": [ "15" ]
       },
       "connection_check_api": {
         "type": "string",
         "description": "api Endpoint like 'Voucher' from 'https://my.sevdesk.de/api/v1/Voucher'",
+        "default": "https://my.sevdesk.de/api/v1/Voucher",
         "examples": [ "Voucher", "Order" ]
       },
       "query_embedded": {
         "type": "integer",
         "description": "Will extend some of the returned data.",
+        "default": "0",
         "examples": [ "0", "1" ]
       },
       "query_limit": {
         "type": "integer",
         "description": "Limits the number of entries that are returned.Most useful in GET requests which will most likely deliver big sets of data like country or currency lists. In this case, you can bypass the default limitation on returned entries by providing a high number.",
-        "examples": [ "0", "100" ]
+        "default": "1000",
+        "examples": [ "100", "1000" ]
       },
       "query_offset": {
         "type": "integer",
         "description": "Specifies a certain offset for the data that will be returned. As an example, you can specify 'offset=2 if you want all entries except for the first two.",
-        "examples": [ "0", "100" ]
+        "default": "1000",
+        "examples": [ "100", "1000" ]
+      },
+      "cursor_based_pagination": {
+        "type": "integer",
+        "description": "If the api supports cursor-based pagination, ",
+        "default": "0",
+        "examples": [ "0", "1" ]
       }
     }
   }

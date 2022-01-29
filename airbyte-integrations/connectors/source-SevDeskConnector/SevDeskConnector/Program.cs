@@ -1,7 +1,9 @@
 using System;
 using System.Globalization;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Airbyte.Cdk;
 using Airbyte.Cdk.Sources;
@@ -10,6 +12,8 @@ using Airbyte.Cdk.Sources.Utils;
 using Flurl;
 using Flurl.Http;
 using Json.More;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Stream = Airbyte.Cdk.Sources.Streams.Stream;
 
 namespace SevDeskConnector
@@ -19,7 +23,10 @@ namespace SevDeskConnector
         public static async Task Main(string[] args) => await AirbyteEntrypoint.Main(args);
         static AirbyteLogger Logger { get; } = new();
 
-        //public string urlBase => "https://my.sevdesk.de/api/v1";
+        Dictionary<string, string> currentState = new Dictionary<string, string>();
+        //Dictionary<string, string> nextPageToken = new Dictionary<string, string>();
+        Dictionary<string, int> pageCount = new Dictionary<string, int>();
+
 
         /// <summary>
         /// CheckConnection wird immer zu begin vopn Airbyte aufgerufen
@@ -52,32 +59,118 @@ namespace SevDeskConnector
         }
 
         /// <summary>
+        /// SevDesk's API needs a special treatment. Cuts parts of the jsonstring away.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="jsonObjects"></param>
+        /// <returns></returns>
+        private bool TrimAndGetJObjects(IFlurlResponse response, out List<JObject> jsonObjects)
+        {
+            jsonObjects = new List<JObject>();
+            try
+            {
+                var jsonStringTask = response.ResponseMessage.Content.ReadAsStringAsync();
+                var jsonString = jsonStringTask.Result.Remove(jsonStringTask.Result.Length - 1);
+                jsonString = jsonString.Remove(0, 11);
+                jsonObjects = JsonConvert.DeserializeObject<List<JObject>>(jsonString);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"Json parsing error:\n {e}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// If response has some data id/date will be returned, else null will be returned
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        private Dictionary<string, object> ExtractNextPageTokenResponse(IFlurlRequest request, IFlurlResponse response)
+        {
+            Logger.Info($"URL: {request.Url}");
+            TrimAndGetJObjects(response, out var listJson);
+            if (listJson.Count == 0)
+            {
+                return new Dictionary<string, object>();
+            }
+
+            var responseValue = listJson[^1].TryGetValue("id", out var outIdValue);
+            var responseDate = listJson[^1].TryGetValue("create", out var outDateValue);
+            if (responseValue && responseDate)
+            {
+                currentState[outIdValue.ToString()] = outDateValue.ToString();
+                return new Dictionary<string, object> { { "id", outIdValue.ToString() } };
+            }
+            else
+            {
+                return new Dictionary<string, object>();
+                //return null;
+            }
+        }
+
+        /// <summary>
+        /// Builds the QueryParams depending on airbytes config.json and if NextpageToken is returning data. If NextPageToken != null it builds the OffsetPagination QueryParam.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="embed"></param>
+        /// <param name="nextPageToken"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        private Dictionary<string, object> BuildQueryParams(string stream, string embed, Dictionary<string, object> nextPageToken, JsonElement config)
+        {
+            string? apiToken = config.GetProperty("api_token").GetString();
+            int queryLimit = config.GetProperty("query_limit").GetInt32();
+            int queryEmbedded = config.GetProperty("query_embedded").GetInt32();
+            int queryOffset = config.GetProperty("query_offset").GetInt32();
+            int cursorBased = config.GetProperty("cursor_based_pagination").GetInt32();
+            var request = new Dictionary<string, object>();
+
+            if (apiToken != null)
+            {
+                request["token"] = apiToken;
+            }
+            if (queryEmbedded != 0)
+            {
+                request["embed"] = embed;
+            }
+            if (queryLimit >= 0)
+            {
+                request["limit"] = queryLimit;
+            }
+            if (nextPageToken != null && cursorBased == 0)
+            {
+                //OffsetPagination
+                request["offset"] = pageCount.GetValueOrDefault(stream);
+                pageCount[stream] = pageCount.GetValueOrDefault(stream) + queryLimit;
+            }
+            else if (cursorBased == 0)
+            {
+                request["offset"] = 0;
+                pageCount[stream] = 0;
+            }
+            return request;
+        }
+
+        /// <summary>
         /// Hauptroutine - Alle Streams und damit alle ApiAbfragen zu SevDesk - Hier werden alle anpassungen gemacht. hier muss konfiguriert werden wie die Daten ausgelesen werden.
         /// </summary>
         /// <param name="config">json wird von Airbyte per command übergeben</param>
         /// <returns></returns>
         public override Stream[] Streams(JsonElement config)
         {
-            Dictionary<string, string> currentState = new Dictionary<string, string>();
-            //Dictionary<string, string> nextPageToken = new Dictionary<string, string>();
-            Dictionary<string, int> pageCount = new Dictionary<string, int>();
-            int pageIndex = 0;
-
             string? urlBase = config.GetProperty("base_url").GetString();
             int backOffTime = config.GetProperty("back_off_time").GetInt32();
             int maxRetries = config.GetProperty("max_retries").GetInt32();
-            string? apiToken = config.GetProperty("api_token").GetString();
             int checkPointInterval = config.GetProperty("checkpoint_interval").GetInt32();
-            int queryLimit = config.GetProperty("query_limit").GetInt32();
-            int queryEmbedded = config.GetProperty("query_embedded").GetInt32();
-            int queryOffset = config.GetProperty("query_offset").GetInt32();
 
             var baseImpl = urlBase.HttpStream().ParseResponseObject("$")
                 .BackoffTime((i, _) => TimeSpan.FromMinutes(i * backOffTime))
                 .HttpMethod(HttpMethod.Get)
                 .MaxRetries(maxRetries)
-                .PageSize(queryLimit);
-            //.StateCheckpointInterval(checkPointInterval)
+                .StateCheckpointInterval(checkPointInterval);
 
             //###################################################
             //### Stream for Vouchers 
@@ -85,16 +178,8 @@ namespace SevDeskConnector
             var voucherImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Voucher", "", nextPageToken, config))
                 .Path((_, _, _) => "Voucher")
                 .Create("Voucher");
 
@@ -104,16 +189,8 @@ namespace SevDeskConnector
             var voucherPosImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("VoucherPos", "", nextPageToken, config))
                 .Path((_, _, _) => "VoucherPos")
                 .Create("VoucherPos");
 
@@ -123,64 +200,10 @@ namespace SevDeskConnector
             var invoiceImpl = baseImpl
             //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
             //.CursorField(new[] { "create" })
-            //.ParseResponse((_,_,_,) =>
-            //    {
-            //        return response;
-            //    })
-            .NextPageToken((request, response) =>
-            {
-                var responseBody = response.ResponseMessage.Content.AsJsonElement();
-                //DateTime date = DateTime.ParseExact(request.Url.QueryParams.FirstOrDefault("create").ToString(),"O", CultureInfo.CurrentCulture);
-                //var responseValue = request.Url.QueryParams.FirstOrDefault("id").ToString();
-                //var date = request.Url.QueryParams.FirstOrDefault("create").ToString();
-                var responseValue = responseBody.TryGetProperty("id", out var outvalue);
-                var responseDate = responseBody.TryGetProperty("create", out var outDate);
-                //outDate.TryGetDateTime(out var outDate2);
-
-                Logger.Info($"Response: {responseBody}");
-                Logger.Info($"URL: {request.Url}");
-
-                if (responseValue && responseDate)
-                {
-                    currentState[outvalue.ToString()] = outDate.ToString();
-                    return new Dictionary<string, object> { { "id", outvalue.ToString() } };
-                }
-                else
-                {
-                    return null;
-                }
-            })
-            .RequestParams((_, _, nextPageToken) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    if (queryEmbedded != 0)
-                    {
-                        request["embed"] = "contact";
-                    }
-                    if (queryLimit >= 0)
-                    {
-                        request["limit"] = queryLimit;
-                    }
-                    if (nextPageToken != null)
-                    {
-                        //DateTime dt = currentState[nextPageToken[].ToString()].AddDays(1);
-                        request["offset"] = pageCount.GetValueOrDefault("Invoice");
-                        pageCount["Invoice"] = pageCount.GetValueOrDefault("Invoice") + queryLimit;
-                    }
-                    else
-                    {
-                        request["offset"] = 0;
-                        pageCount["Invoice"] = 0;
-                    }
-                    return request;
-                })
-            .Path((_, _, _) => "Invoice")
-            .Create("Invoice");
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Invoice", "", nextPageToken, config))
+                .Path((_, _, _) => "Invoice")
+                .Create("Invoice");
 
             //###################################################
             //### Stream for InvoicePoses
@@ -188,16 +211,8 @@ namespace SevDeskConnector
             var invoicePosImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("InvoicePos", "", nextPageToken, config))
                 .Path((_, _, _) => "InvoicePos")
                 .Create("InvoicePos");
 
@@ -207,16 +222,8 @@ namespace SevDeskConnector
             var contactImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Contact", "", nextPageToken, config))
                 .Path((_, _, _) => "Contact")
                 .Create("Contact");
 
@@ -226,16 +233,8 @@ namespace SevDeskConnector
             var contactAddressImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("ContactAddress", "", nextPageToken, config))
                 .Path((_, _, _) => "ContactAddress")
                 .Create("ContactAddress");
 
@@ -245,16 +244,8 @@ namespace SevDeskConnector
             var accountingContactImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("AccountingContact", "", nextPageToken, config))
                 .Path((_, _, _) => "AccountingContact")
                 .Create("AccountingContact");
 
@@ -262,16 +253,8 @@ namespace SevDeskConnector
             //### Stream for Orders 
             //###################################################
             var orderImpl = baseImpl
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Order", "", nextPageToken, config))
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .Path((_, _, _) => "Order")
@@ -283,16 +266,8 @@ namespace SevDeskConnector
             var orderPosImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("OrderPos", "", nextPageToken, config))
                 .Path((_, _, _) => "OrderPos")
                 .Create("OrderPos");
 
@@ -302,16 +277,8 @@ namespace SevDeskConnector
             var communicationWayImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("CommunicationWay", "", nextPageToken, config))
                 .Path((_, _, _) => "CommunicationWay")
                 .Create("CommunicationWay");
 
@@ -321,16 +288,8 @@ namespace SevDeskConnector
             var partImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
-
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
-                })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Part", "", nextPageToken, config))
                 .Path((_, _, _) => "Part")
                 .Create("Part");
 
@@ -340,16 +299,63 @@ namespace SevDeskConnector
             var emailImpl = baseImpl
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
-                .RequestParams((_, _, _) =>
-                {
-                    var request = new Dictionary<string, object>();
 
-                    if (apiToken != null)
-                    {
-                        request["token"] = apiToken;
-                    }
-                    return request;
+                // <summary>
+                // Override this method to define a pagination strategy.
+                // The value returned from this method is passed to most other methods in this class. Use it to form a request e.g: set headers or query params.
+                // </summary>
+                // <param name="response"></param>
+                // <returns>The token for the next page from the input response object. Returning None means there are no more pages to read in this response.</returns>
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                // <summary>
+                // Parses the raw response object into a list of records.
+                // By default, this returns an iterable containing the input. Override to parse differently.
+                // </summary>
+                // <param name="response"></param>
+                // <param name="streamstate"></param>
+                // <param name="streamslice"></param>
+                // <param name="nextpagetoken"></param>
+                // <returns></returns>
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                   TrimAndGetJObjects(response, out var listJson);
+                   foreach (var jsonObject in listJson) 
+                   { 
+                        //JObject header = (JObject)jsonObject.SelectToken("Object.id");
+                        //header.Property("ConversionValue").Remove();
+                        jsonObject.Remove("objectName");
+                        jsonObject.Remove("additionalInformation");
+                        jsonObject.Remove("create");
+                        jsonObject.Remove("update");
+                        jsonObject.Remove("object");
+                        jsonObject.Remove("from");
+                        jsonObject.Remove("to");
+                        jsonObject.Remove("subject");
+                        jsonObject.Remove("text");
+                        jsonObject.Remove("sevClient");
+
+                        responseData.Add(System.Text.Json.JsonSerializer.SerializeToElement(jsonObject.ToString()));
+                   }
+                   return responseData;
                 })
+                // <summary>
+                // Override this method to define the query parameters that should be set on an outgoing HTTP request given the inputs.
+                // E.g: you might want to define query parameters for paging if next_page_token is not None.
+                // </summary>
+                // <param name="streamstate"></param>
+                // <param name="streamslice"></param>
+                // <param name="nextpagetoken"></param>
+                // <returns></returns>
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Email", "object", nextPageToken, config))
+                // <summary>
+                // Returns the URL path for the API endpoint e.g: if you wanted to hit https://myapi.com/v1/some_entity then this should return "some_entity"
+                // Defaults to {UrlBase}/{Name} where Name is the name of this stream
+                // </summary>
+                // <param name="streamstate"></param>
+                // <param name="streamslice"></param>
+                // <param name="nextpagetoken"></param>
+                // <returns></returns>
                 .Path((_, _, _) => "Email")
                 .Create("Email");
 

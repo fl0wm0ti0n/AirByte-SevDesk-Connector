@@ -1,0 +1,425 @@
+{
+  "required": [
+    "orderNumber",
+    "orderDate",
+    "contact",
+    "status",
+    "smallSettlement",
+    "contactPerson",
+    "taxRate",
+    "taxText",
+    "taxType",
+    "invoiceType",
+    "currency",
+    "header",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "description": "The order id",
+      "type": "integer",
+      "readOnly": true,
+      "nullable": false
+    },
+    "objectName": {
+      "description": "The order object name",
+      "type": "string",
+      "readOnly": true,
+      "nullable": false
+    },
+    "create": {
+      "description": "Date of order creation",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "update": {
+      "description": "Date of last order update",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "orderNumber": {
+      "description": "The order number",
+      "type": "string",
+      "example": "Offer-1000"
+    },
+    "contact": {
+      "description": "The contact used in the order",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the contact",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Contact'",
+          "type": "string",
+          "default": "Contact"
+        }
+      },
+      "type": "object",
+      "nullable": false
+    },
+    "orderDate": {
+      "description": "Needs to be provided as timestamp or dd.mm.yyyy",
+      "type": "string",
+      "format": "date-time",
+      "example": "01.01.2020",
+      "nullable": false
+    },
+    "status": {
+      "description": "Please have a look in our\r\n    <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-orders#types'>API-Overview</a>\r\n    to see what the different status codes mean",
+      "type": "integer",
+      "enum": [
+        100,
+        200,
+        300,
+        500,
+        750,
+        1000
+      ],
+      "example": 100,
+      "nullable": false
+    },
+    "header": {
+      "description": "Normally consist of prefix plus the order number",
+      "type": "string",
+      "example": "My Offer-1000",
+      "nullable": false
+    },
+    "headText": {
+      "description": "Certain html tags can be used here to format your text",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "footText": {
+      "description": "Certain html tags can be used here to format your text",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "addressName": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressStreet": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressZip": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressCity": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressCountry": {
+      "description": "Can be omitted as complete address is defined in address attribute",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the country",
+          "type": "integer",
+          "deprecated": true
+        },
+        "objectName": {
+          "description": "Model name, which is 'StaticCountry'",
+          "type": "string",
+          "deprecated": true
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "createUser": {
+      "description": "Will be filled automatically by our system and can't be changed",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the user",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevUser'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "sevClient": {
+      "description": "Client to which order belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "readOnly": true
+    },
+    "deliveryTerms": {
+      "description": "Delivery terms of the order",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "paymentTerms": {
+      "description": "Payment terms of the order",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "version": {
+      "description": "Version of the order.<br>\r\n    Can be used if you have multiple drafts for the same order.<br>\r\n    Should start with 0",
+      "type": "integer",
+      "example": 0,
+      "nullable": false
+    },
+    "smallSettlement": {
+      "description": "Defines if the client uses the small settlement scheme.\r\n    If yes, the order must not contain any vat",
+      "type": "boolean",
+      "example": 0,
+      "nullable": false
+    },
+    "contactPerson": {
+      "description": "The user who acts as a contact person for the order",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the user",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevUser'",
+          "type": "string",
+          "default": "SevUser"
+        }
+      },
+      "type": "object"
+    },
+    "taxRate": {
+      "description": "Is overwritten by order position tax rates",
+      "type": "number",
+      "format": "float",
+      "example": 19,
+      "nullable": false
+    },
+    "taxSet": {
+      "description": "Tax set of the order. Needs to be added if you chose the tax type custom",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "integer"
+        },
+        "objectName": {
+          "description": "Model name, which is 'TaxSet'",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "default": null,
+      "nullable": true
+    },
+    "taxText": {
+      "description": "A common tax text would be 'Umsatzsteuer 19%'",
+      "type": "string",
+      "example": "Umsatzsteuer 19%",
+      "nullable": false
+    },
+    "addressParentName": {
+      "description": "Address parent name.",
+      "type": "string",
+      "default": null,
+      "nullable": true,
+      "deprecated": true
+    },
+    "taxType": {
+      "description": "Tax type of the order.\nThere are four tax types:\n1. default - Umsatzsteuer ausweisen\n2. eu - Steuerfreie innergemeinschaftliche Lieferung (Europ\u00e4ische Union)\n3. noteu - Steuerschuldnerschaft des Leistungsempf\u00e4ngers (au\u00dferhalb EU, z. B. Schweiz)\n4. custom - Using custom tax set\nTax rates are heavily connected to the tax type used.",
+      "type": "string",
+      "example": "default",
+      "nullable": false
+    },
+    "orderType": {
+      "description": "Type of the order. For more information on the different types, check\r\n    <a href='https://5677.extern.sevdesk.dev/apiOverview/index.html#/doc-orders#types'>this</a> section of\r\n    our API-Overview",
+      "type": "string",
+      "enum": [
+        "AN",
+        "AB",
+        "LI"
+      ],
+      "example": "AN",
+      "nullable": false
+    },
+    "sendDate": {
+      "description": "The date the order was sent to the customer",
+      "type": "string",
+      "format": "date-time",
+      "default": null,
+      "nullable": true
+    },
+    "addressParentName2": {
+      "description": "Deprecated attribute",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressName2": {
+      "description": "Second name of the recipient",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "addressGender": {
+      "description": "Gender of the recipient",
+      "type": "string",
+      "readOnly": true,
+      "nullable": true,
+      "deprecated": true
+    },
+    "address": {
+      "description": "Complete address of the recipient including name, street, city, zip and country.<br>\r\n     Line breaks can be used and will be displayed on the invoice pdf.",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "currency": {
+      "description": "Currency used in the order. Needs to be currency code according to ISO-4217",
+      "type": "string",
+      "example": "EUR",
+      "nullable": false
+    },
+    "sumNet": {
+      "description": "Net sum of the order",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTax": {
+      "description": "Tax sum of the order",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGross": {
+      "description": "Gross sum of the order",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscounts": {
+      "description": "Sum of all discounts in the order",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumNetForeignCurrency": {
+      "description": "Net sum of the order in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumTaxForeignCurrency": {
+      "description": "Tax sum of the order in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumGrossForeignCurrency": {
+      "description": "Gross sum of the order in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "sumDiscountsForeignCurrency": {
+      "description": "Discounts sum of the order in the foreign currency",
+      "type": "number",
+      "format": "float",
+      "readOnly": true,
+      "nullable": false
+    },
+    "weight": {
+      "description": "Deprecated attribute.",
+      "type": "number",
+      "format": "float",
+      "default": 0,
+      "nullable": false
+    },
+    "customerInternalNote": {
+      "description": "Internal note of the customer. Contains data entered into field 'Referenz/Bestellnummer'",
+      "type": "string",
+      "default": null,
+      "nullable": true
+    },
+    "showNet": {
+      "description": "If true, the net amount of each position will be shown on the order. Otherwise gross amount",
+      "type": "boolean",
+      "default": 1,
+      "nullable": false
+    },
+    "sendType": {
+      "description": "Type which was used to send the order. IMPORTANT: Please refer to the order section of the\r\n     *     API-Overview to understand how this attribute can be used before using it!",
+      "type": "string",
+      "default": null,
+      "enum": [
+        "VPR",
+        "VPDF",
+        "VM",
+        "VP"
+      ],
+      "nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
