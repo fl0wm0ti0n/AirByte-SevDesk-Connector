@@ -22,6 +22,9 @@
       <None Update="config.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="configured_catalog_part.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="configured_catalog_email.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
@@ -47,9 +50,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas\contact_address.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="schemas\email.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="schemas_online_generated\email.json">

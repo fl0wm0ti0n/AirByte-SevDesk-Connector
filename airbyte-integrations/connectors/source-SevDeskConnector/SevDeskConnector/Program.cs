@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Airbyte.Cdk;
@@ -29,7 +31,7 @@ namespace SevDeskConnector
 
 
         /// <summary>
-        /// CheckConnection wird immer zu begin vopn Airbyte aufgerufen
+        /// CheckConnection would be run at begin of a connection and changing connectors config in airbyte
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="config">json wird von Airbyte per command übergeben</param>
@@ -59,12 +61,12 @@ namespace SevDeskConnector
         }
 
         /// <summary>
-        /// SevDesk's API needs a special treatment. Cuts parts of the jsonstring away.
+        /// SevDesk's API needs a special treatment. Cuts parts of the jsonstring away and returns json.net JObjects.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="jsonObjects"></param>
         /// <returns></returns>
-        private bool TrimAndGetJObjects(IFlurlResponse response, out List<JObject> jsonObjects)
+        private bool GetJObjects(IFlurlResponse response, out List<JObject> jsonObjects)
         {
             jsonObjects = new List<JObject>();
             try
@@ -83,15 +85,56 @@ namespace SevDeskConnector
         }
 
         /// <summary>
+        /// SevDesk's API needs a special treatment. Cuts parts of the jsonstring away and returns Text.Json JsonObjects..
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="jsonObjects"></param>
+        /// <returns></returns>
+        private bool GetJsonObjects(IFlurlResponse response, out List<JsonObject> jsonObjects)
+        {
+            jsonObjects = new List<JsonObject>();
+            try
+            {
+                var jsonStringTask = response.ResponseMessage.Content.ReadAsStringAsync();
+                var jsonString = jsonStringTask.Result.Remove(jsonStringTask.Result.Length - 1);
+                jsonString = jsonString.Remove(0, 11);
+                jsonObjects = System.Text.Json.JsonSerializer.Deserialize<List<JsonObject>>(jsonString);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"Json parsing error:\n {e}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// SevDesk's API needs a special treatment. Cuts parts of the jsonstring away.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="jsonObjects"></param>
+        /// <returns></returns>
+        private List<JsonElement> GetJsonElements(IFlurlResponse response)
+        {
+            var jsonElements = new List<JsonElement>();
+            GetJsonObjects(response, out var listJson);
+            foreach (var jsonObject in listJson)
+            {
+                jsonElements.Add(jsonObject.AsJsonElement());
+            }
+            return jsonElements;
+        }
+
+        /// <summary>
         /// If response has some data id/date will be returned, else null will be returned
         /// </summary>
         /// <param name="request"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        private Dictionary<string, object> ExtractNextPageTokenResponse(IFlurlRequest request, IFlurlResponse response)
+        private Dictionary<string, object>? ExtractNextPageTokenResponse(IFlurlRequest request, IFlurlResponse response)
         {
             Logger.Info($"URL: {request.Url}");
-            TrimAndGetJObjects(response, out var listJson);
+            GetJObjects(response, out var listJson);
             if (listJson.Count == 0)
             {
                 return new Dictionary<string, object>();
@@ -106,8 +149,8 @@ namespace SevDeskConnector
             }
             else
             {
-                return new Dictionary<string, object>();
-                //return null;
+                //return new Dictionary<string, object>();
+                return null;
             }
         }
 
@@ -155,7 +198,7 @@ namespace SevDeskConnector
         }
 
         /// <summary>
-        /// Hauptroutine - Alle Streams und damit alle ApiAbfragen zu SevDesk - Hier werden alle anpassungen gemacht. hier muss konfiguriert werden wie die Daten ausgelesen werden.
+        /// here are all streams defined
         /// </summary>
         /// <param name="config">json wird von Airbyte per command übergeben</param>
         /// <returns></returns>
@@ -180,6 +223,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("Voucher", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "Voucher")
                 .Create("Voucher");
 
@@ -191,6 +235,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("VoucherPos", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "VoucherPos")
                 .Create("VoucherPos");
 
@@ -202,6 +247,24 @@ namespace SevDeskConnector
             //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("Invoice", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation");
+                        jsonObject.Remove("originLastInvoice");
+                        jsonObject.Remove("accountStartDate");
+                        jsonObject.Remove("sumDiscountNet");
+                        jsonObject.Remove("sumDiscountGross");
+                        jsonObject.Remove("sumDiscountNetForeignCurrency");
+                        jsonObject.Remove("sumDiscountGrossForeignCurrency");
+
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "Invoice")
                 .Create("Invoice");
 
@@ -213,6 +276,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("InvoicePos", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "InvoicePos")
                 .Create("InvoicePos");
 
@@ -235,6 +299,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("ContactAddress", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "ContactAddress")
                 .Create("ContactAddress");
 
@@ -255,6 +320,7 @@ namespace SevDeskConnector
             var orderImpl = baseImpl
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("Order", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .Path((_, _, _) => "Order")
@@ -268,6 +334,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("OrderPos", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "OrderPos")
                 .Create("OrderPos");
 
@@ -279,6 +346,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("CommunicationWay", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "CommunicationWay")
                 .Create("CommunicationWay");
 
@@ -290,6 +358,7 @@ namespace SevDeskConnector
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
                 .RequestParams((_, _, nextPageToken) => BuildQueryParams("Part", "", nextPageToken, config))
+                .ParseResponse((response, _, _, _) => GetJsonElements(response))
                 .Path((_, _, _) => "Part")
                 .Create("Part");
 
@@ -318,26 +387,26 @@ namespace SevDeskConnector
                 // <returns></returns>
                 .ParseResponse((response, _, _, _) =>
                 {
-                    var responseData = new List<JsonElement>();
-                   TrimAndGetJObjects(response, out var listJson);
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
                    foreach (var jsonObject in listJson) 
                    { 
                         //JObject header = (JObject)jsonObject.SelectToken("Object.id");
                         //header.Property("ConversionValue").Remove();
-                        jsonObject.Remove("objectName");
+                        //jsonObject.Remove("objectName");
                         jsonObject.Remove("additionalInformation");
-                        jsonObject.Remove("create");
-                        jsonObject.Remove("update");
-                        jsonObject.Remove("object");
-                        jsonObject.Remove("from");
-                        jsonObject.Remove("to");
-                        jsonObject.Remove("subject");
-                        jsonObject.Remove("text");
-                        jsonObject.Remove("sevClient");
+                        //jsonObject.Remove("create");
+                        //jsonObject.Remove("update");
+                        //jsonObject.Remove("object");
+                        //jsonObject.Remove("from");
+                        //jsonObject.Remove("to");
+                        //jsonObject.Remove("subject");
+                        //jsonObject.Remove("text");
+                        //jsonObject.Remove("sevClient");
 
-                        responseData.Add(System.Text.Json.JsonSerializer.SerializeToElement(jsonObject.ToString()));
+                        jsonElements.Add(jsonObject.AsJsonElement());
                    }
-                   return responseData;
+                   return jsonElements;
                 })
                 // <summary>
                 // Override this method to define the query parameters that should be set on an outgoing HTTP request given the inputs.
@@ -375,5 +444,12 @@ namespace SevDeskConnector
                 emailImpl
             };
         }
+    }
+
+    [JsonObject]
+    public class Email
+    {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
     }
 }

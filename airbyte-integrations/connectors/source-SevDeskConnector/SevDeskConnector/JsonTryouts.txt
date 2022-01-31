@@ -1,0 +1,73 @@
+﻿                    List<JObject> jObjects = new List<JObject>();
+                    List<JsonObject> jsonObjects = new List<JsonObject>();
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+
+                    var jsonStringTask = response.ResponseMessage.Content.ReadAsStringAsync();
+                    var jsonString = jsonStringTask.Result.Remove(jsonStringTask.Result.Length - 1);
+                    jsonString = jsonString.Remove(0, 11);
+
+                    //
+                    var jsObjectArr = JsonConvert.DeserializeObject<JObject>(jsonStringTask.Result);
+                    var test0 = jsObjectArr.GetValue("objects");
+                    var test02 = JObject.Parse(jsonStringTask.Result)["objects"];
+                    //var test03 = System.Text.Json.JsonSerializer.SerializeToElement<JsonElement>(test02.AsJsonElement());
+                    foreach (var arra in test0)
+                    {
+                        var valuek = arra.ToString();
+                    }
+
+                    // 
+                    var jsObjectArr2 = JsonConvert.DeserializeObject<JArray>(jsonString);
+                    foreach (var arra in jsObjectArr2)
+                    {
+                        var valuek = arra.ToString();
+                    }
+
+                    //
+                    var jsonObjectArr = System.Text.Json.JsonSerializer.Deserialize<JsonObject>(jsonStringTask.Result);
+                    var result01 = JsonDocument.Parse(jsonStringTask.Result).RootElement.GetProperty("objects");
+                    var test2 = jsonObjectArr.AsJsonElement();
+                    var test3 = jsonObjectArr.AsEnumerable();
+                    var test04 = test2.GetProperty("objects");
+
+                    foreach (var arra in result01.EnumerateArray())
+                    {
+                        var valuek = arra.ValueKind.ToString();
+                    }
+
+
+                    // Best solution
+                    var jsonObjectArr2 = System.Text.Json.JsonSerializer.Deserialize<List<JsonObject>>(jsonString);
+                    var test5 = jsonObjectArr2.AsJsonElement();
+                    var test6 = jsonObjectArr2.AsEnumerable();
+
+                    List<JsonElement> jsonl = new List<JsonElement>();
+                    foreach (var arra in jsonObjectArr2)
+                    {
+                        var valuek = arra.Remove("id");
+                        jsonl.Add(arra.AsJsonElement());
+                    }
+
+                    foreach (var arra in test5.EnumerateArray())
+                    {
+                        var valuek = arra.ValueKind.ToString();
+                    }
+
+                    
+                    //var jsonObjectDict = System.Text.Json.JsonSerializer.Deserialize<List<Dictionary<string, Object>>>(jsonStringTask.Result);
+                    //var test4 = System.Text.Json.JsonSerializer.SerializeToElement<List<Dictionary<string,object>>>(jsonObjectDict);
+
+                    //List<string> jsonStringList = JsonConvert.DeserializeObject<List<string>>(jsonString);
+                    //foreach (var jstr in jsonStringList)
+                    //{
+                    //    var jso = JsonConvert.DeserializeObject<JsonObject>(jstr);
+                    //    jso.Remove("id");
+                    //    jsonObjects.Add(jso);
+                    //    jsonElements.Add(System.Text.Json.JsonSerializer.SerializeToElement(jstr));
+                    //    //jsonElements.Add(JsonConvert.DeserializeObject<JsonElement>(jsonObject.ToJsonString());
+                    //}
+
+                    //jsonObjects = System.Text.Json.JsonSerializer.SerializeToElement<List<JsonObject>>(jsonString);
+
+                    //jsonElements = System.Text.Json.JsonSerializer.SerializeToElement(jsonString);
+                    //jsonElements = JsonConvert.DeserializeObject<List<JsonElement>>(jsonObjects.ToString());
