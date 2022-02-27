@@ -14,7 +14,7 @@ jobs:
       with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build the Docker image
-      run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:$(date +%s)
+      run:  docker build ./SevDeskConnector/ --tag ghcr.io/airbyte-sevdesk-source-connector:$(date +%s)
     - name: docker loogin
      # env:
       #  DOCKER_USER: ${{ secrets.DOCKER_USER}}
