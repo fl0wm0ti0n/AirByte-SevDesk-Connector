@@ -7,27 +7,21 @@
   "properties": {
     "id": {
       "description": "The invoice position id",
-      "type": "integer",
-      "readOnly": true,
-      "nullable": false
+      "type": "string"
     },
     "objectName": {
       "description": "The invoice position object name",
-      "type": "string",
-      "readOnly": true,
-      "nullable": false
+      "type": "string"
     },
     "create": {
       "description": "Date of invoice position creation",
       "type": "string",
-      "format": "date-time",
-      "readOnly": true
+      "format": "date-time"
     },
     "update": {
       "description": "Date of last invoice position update",
       "type": "string",
-      "format": "date-time",
-      "readOnly": true
+      "format": "date-time"
     },
     "invoice": {
       "description": "The invoice to which the position belongs.",
@@ -38,42 +32,30 @@
       "properties": {
         "id": {
           "description": "Unique identifier of the invoice",
-          "type": "integer"
+          "type": "string"
         },
         "objectName": {
           "description": "Model name, which is 'Invoice'",
           "type": "string"
         }
       },
-      "type": "object",
-      "readOnly": true
+      "type": "object"
     },
     "quantity": {
       "description": "Quantity of the article/part",
-      "type": "number",
-      "format": "float",
-      "example": "1",
-      "nullable": true
+      "type": "string"
     },
     "price": {
       "description": "Price of the article/part. Is either gross or net, depending on the sevDesk account setting.",
-      "type": "number",
-      "format": "float",
-      "example": "100",
-      "nullable": true
+      "type": "string"
     },
     "name": {
       "description": "Name of the article/part.",
-      "type": "string",
-      "example": "Dragonglass",
-      "nullable": true
+      "type": "string"
     },
     "priority": {
       "description": "Priority of the position.",
-      "type": "integer",
-      "default": "100",
-      "nullable": false,
-      "deprecated": true
+      "type": "string"
     },
     "unity": {
       "description": "The unit in which the positions part is measured",
@@ -84,13 +66,11 @@
       "properties": {
         "id": {
           "description": "Unique identifier of the unit",
-          "type": "integer",
-          "example": "1"
+          "type": "string"
         },
         "objectName": {
           "description": "Model name, which is 'Unity'",
-          "type": "string",
-          "default": "Unity"
+          "type": "string"
         }
       },
       "type": "object"
@@ -104,7 +84,7 @@
       "properties": {
         "id": {
           "description": "Unique identifier of the client",
-          "type": "integer"
+          "type": "string"
         },
         "objectName": {
           "description": "Model name, which is 'SevClient'",
@@ -112,114 +92,67 @@
           "default": "SevClient"
         }
       },
-      "type": "object",
-      "readOnly": true
+      "type": "object"
     },
     "positionNumber": {
       "description": "Position number of your position. Can be used to order multiple positions.",
-      "type": "integer",
-      "default": null,
-      "nullable": true
+      "type": "string"
     },
     "text": {
       "description": "A text describing your position.",
-      "type": "string",
-      "default": null,
-      "nullable": true
+      "type": "string"
     },
     "discount": {
       "description": "An optional discount of the position.",
-      "type": "number",
-      "format": "float",
-      "default": null,
-      "nullable": true
+      "type": "string"
     },
     "taxRate": {
       "description": "Tax rate of the position.",
-      "type": "number",
-      "format": "float",
-      "example": "19",
-      "nullable": false
+      "type": "string"
     },
     "temporary": {
       "description": "Defines if the position is temporary",
-      "type": "boolean",
-      "default": null,
-      "nullable": true,
-      "deprecated": true
+      "type": "string"
     },
     "sumNet": {
       "description": "Net sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true,
-      "deprecated": true
+      "type": "string"
     },
     "sumGross": {
       "description": "Gross sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true,
-      "deprecated": true
+      "type": "string"
     },
     "sumDiscount": {
       "description": "Discount sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true
+      "type": "string"
     },
     "sumTax": {
       "description": "Tax sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": false,
-      "deprecated": true
+      "type": "string"
     },
     "sumNetAccounting": {
       "description": "Net accounting sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true
+      "type": "string"
     },
     "sumTaxAccounting": {
       "description": "Tax accounting sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true
+      "type": "string"
     },
     "sumGrossAccounting": {
       "description": "Gross accounting sum of the position",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true
+      "type": "string"
     },
     "priceNet": {
       "description": "Net price of the part",
-      "type": "number",
-      "format": "float",
-      "readOnly": true,
-      "nullable": true
+      "type": "string"
     },
     "priceGross": {
       "description": "Gross price of the part",
-      "type": "number",
-      "format": "float",
-      "example": "100",
-      "nullable": true
+      "type": "string"
     },
     "priceTax": {
       "description": "Tax on the price of the part",
-      "type": "number",
-      "format": "float",
-      "default": null,
-      "nullable": true
+      "type": "string"
     }
   },
   "type": "object",

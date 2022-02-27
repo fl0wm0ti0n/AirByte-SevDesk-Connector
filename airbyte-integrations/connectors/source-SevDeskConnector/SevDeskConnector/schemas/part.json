@@ -76,7 +76,7 @@
     "stockEnabled": {
       "description": "Defines if the stock should be enabled",
       "type": "boolean",
-      "default": 1,
+      "default": "1",
       "nullable": false
     },
     "unity": {

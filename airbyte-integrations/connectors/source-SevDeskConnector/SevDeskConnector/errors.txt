@@ -1,0 +1,17 @@
+﻿2022-02-09 19:36:58 normalization > Completed with 3 errors and 0 warnings:
+2022-02-09 19:36:58 normalization > 
+2022-02-09 19:36:58 normalization > Database Error in model invoice (models/generated/airbyte_incremental/sevdesktestdataset/invoice.sql)
+2022-02-09 19:36:58 normalization >   Bad bool value: 1
+2022-02-09 19:36:58 normalization > 
+2022-02-09 19:36:58 normalization > Database Error in model invoice_pos (models/generated/airbyte_incremental/sevdesktestdataset/invoice_pos.sql)
+2022-02-09 19:36:58 normalization >   Bad double value: COVID Fighters - COVID-19 Test (...
+2022-02-09 19:36:58 normalization > 
+2022-02-09 19:36:58 normalization > Database Error in model email (models/generated/airbyte_incremental/sevdesktestdataset/email.sql)
+2022-02-09 19:36:58 normalization >   Syntax error: Unexpected keyword TO at [6:27]
+2022-02-09 19:36:58 normalization > 
+2022-02-09 19:36:58 normalization > Done. PASS=0 WARN=0 ERROR=3 SKIP=10 TOTAL=13
+2022-02-10 21:05:09 normalization > Completed with 1 error and 0 warnings:
+2022-02-10 21:05:09 normalization > 
+2022-02-10 21:05:09 normalization > Database Error in model invoice (models/generated/airbyte_tables/sevdesktestdataset/invoice.sql)
+2022-02-10 21:05:09 normalization >   Bad int64 value: 2020-05-20T00:00:00+02:00
+2022-02-10 21:05:09 normalization >   compiled SQL at ../build/run/airbyte_utils/models/generated/airbyte_tables/sevdesktestdataset/invoice.sql

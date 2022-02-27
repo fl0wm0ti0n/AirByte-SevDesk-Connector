@@ -147,11 +147,7 @@ namespace SevDeskConnector
                 currentState[outIdValue.ToString()] = outDateValue.ToString();
                 return new Dictionary<string, object> { { "id", outIdValue.ToString() } };
             }
-            else
-            {
-                //return new Dictionary<string, object>();
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
@@ -168,7 +164,7 @@ namespace SevDeskConnector
             int queryLimit = config.GetProperty("query_limit").GetInt32();
             int queryEmbedded = config.GetProperty("query_embedded").GetInt32();
             int queryOffset = config.GetProperty("query_offset").GetInt32();
-            int cursorBased = config.GetProperty("cursor_based_pagination").GetInt32();
+            int cursorBased = config.GetProperty("cursor_based_pagination").GetInt32(); // 22022022 not featured from SevDesk
             var request = new Dictionary<string, object>();
 
             if (apiToken != null)
@@ -198,9 +194,9 @@ namespace SevDeskConnector
         }
 
         /// <summary>
-        /// here are all streams defined
+        /// all streams are defined here
         /// </summary>
-        /// <param name="config">json wird von Airbyte per command übergeben</param>
+        /// <param name="config">json config is delivered from Airbyte via command</param>
         /// <returns></returns>
         public override Stream[] Streams(JsonElement config)
         {
@@ -219,11 +215,25 @@ namespace SevDeskConnector
             //### Stream for Vouchers 
             //###################################################
             var voucherImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Voucher", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Voucher", "sevClient,createUser,supplier,document,documentPreview,costCentre,taxSet", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        // maybe there are more missing fields since SevDesk has an totally incompletely api documentation
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["hidden"] = jsonObject["hidden"]?.ToString() != "0"; // convert strint to bool
+                        jsonObject["showNet"] = jsonObject["showNet"]?.ToString() != "0"; // convert strint to bool
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "Voucher")
                 .Create("Voucher");
 
@@ -231,11 +241,25 @@ namespace SevDeskConnector
             //### Stream for VoucherPoses
             //###################################################
             var voucherPosImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("VoucherPos", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("VoucherPos", "sevClient,voucher,accountingType,estimatedAccountingType", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        // maybe there are more missing fields since SevDesk has an totally incompletely api documentation
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["net"] = jsonObject["net"]?.ToString() != "0"; // convert strint to bool
+                        jsonObject["isAsset"] = jsonObject["isAsset"]?.ToString() != "0"; // convert strint to bool
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "VoucherPos")
                 .Create("VoucherPos");
 
@@ -243,24 +267,26 @@ namespace SevDeskConnector
             //### Stream for Invoices 
             //###################################################
             var invoiceImpl = baseImpl
-            //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
-            //.CursorField(new[] { "create" })
+                // TODO incremental sync
+                //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
+                //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Invoice", "", nextPageToken, config))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Invoice", "sevClient,contact,addressCountry,createUser,contactPerson", nextPageToken, config))
                 .ParseResponse((response, _, _, _) =>
                 {
                     var responseData = new List<JsonElement>();
                     GetJsonObjects(response, out var listJson);
                     foreach (var jsonObject in listJson)
                     {
-                        jsonObject.Remove("additionalInformation");
-                        jsonObject.Remove("originLastInvoice");
-                        jsonObject.Remove("accountStartDate");
-                        jsonObject.Remove("sumDiscountNet");
-                        jsonObject.Remove("sumDiscountGross");
-                        jsonObject.Remove("sumDiscountNetForeignCurrency");
-                        jsonObject.Remove("sumDiscountGrossForeignCurrency");
-
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject.Remove("originLastInvoice"); // not in SevDesk's api docu
+                        jsonObject.Remove("accountStartDate"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountNet"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountGross"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountNetForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountGrossForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject["smallSettlement"] = jsonObject["smallSettlement"]?.ToString() != "0"; // convert strint to bool
+                        jsonObject["showNet"] = jsonObject["showNet"]?.ToString() != "0"; // convert strint to bool
                         responseData.Add(jsonObject.AsJsonElement());
                     }
                     return responseData;
@@ -272,11 +298,30 @@ namespace SevDeskConnector
             //### Stream for InvoicePoses
             //###################################################
             var invoicePosImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("InvoicePos", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("InvoicePos", "invoice,unity,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject.Remove("isPercentage"); // not in SevDesk's api docu
+                        jsonObject.Remove("discountedValue"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumNetForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumTaxForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumGrossForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("createNextPart"); // not in SevDesk's api docu
+                        jsonObject["temporary"] = jsonObject["temporary"]?.ToString() != "0"; // convert strint to bool
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "InvoicePos")
                 .Create("InvoicePos");
 
@@ -284,10 +329,27 @@ namespace SevDeskConnector
             //### Stream for Contacts 
             //###################################################
             var contactImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Contact", "", nextPageToken, config))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Contact", "category,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject.Remove("status"); // not in SevDesk's api docu
+                        jsonObject.Remove("buyerReference"); // not in SevDesk's api docu
+                        jsonObject.Remove("governmentAgency"); // not in SevDesk's api docu
+                        jsonObject["exemptVat"] = jsonObject["exemptVat"]?.ToString() != "0"; // convert strint to bool
+                        jsonObject["defaultDiscountPercentage"] = jsonObject["defaultDiscountPercentage"]?.ToString() != "0"; // convert strint to bool
+                        jsonElements.Add(jsonObject.AsJsonElement());
+                    }
+                    return jsonElements;
+                })
                 .Path((_, _, _) => "Contact")
                 .Create("Contact");
 
@@ -295,11 +357,22 @@ namespace SevDeskConnector
             //### Stream for ContactAddress
             //###################################################
             var contactAddressImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("ContactAddress", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("ContactAddress", "contact,country,category,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "ContactAddress")
                 .Create("ContactAddress");
 
@@ -307,10 +380,22 @@ namespace SevDeskConnector
             //### Stream for AccountingAddress
             //###################################################
             var accountingContactImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("AccountingContact", "", nextPageToken, config))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("AccountingContact", "contact,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonElements.Add(jsonObject.AsJsonElement());
+                    }
+                    return jsonElements;
+                })
                 .Path((_, _, _) => "AccountingContact")
                 .Create("AccountingContact");
 
@@ -318,11 +403,28 @@ namespace SevDeskConnector
             //### Stream for Orders 
             //###################################################
             var orderImpl = baseImpl
-                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Order", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
+                .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Order", "contact,addressCountry,createUser,sevClient,contactPerson,taxSet", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("sumDiscountNet"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountGross"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountNetForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountGrossForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["smallSettlement"] = jsonObject["smallSettlement"]?.ToString() != "0"; // convert strint to bool
+                        jsonObject["showNet"] = jsonObject["showNet"]?.ToString() != "0"; // convert strint to bool
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "Order")
                 .Create("Order");
 
@@ -330,11 +432,31 @@ namespace SevDeskConnector
             //### Stream for OrderPoses
             //###################################################
             var orderPosImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("OrderPos", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("OrderPos", "order,unity,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    var responseData = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("isPercentage"); // not in SevDesk's api docu
+                        jsonObject.Remove("discountedValue"); // not in SevDesk's api docu
+                        jsonObject.Remove("optionalChargeable"); // not in SevDesk's api doc
+                        jsonObject.Remove("sumNetForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumTaxForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumGrossForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("sumDiscountForeignCurrency"); // not in SevDesk's api docu
+                        jsonObject.Remove("createNextPart"); // not in SevDesk's api docu
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["optional"] = jsonObject["optional"]?.ToString() != "0"; // convert strint to bool
+                        responseData.Add(jsonObject.AsJsonElement());
+                    }
+                    return responseData;
+                })
                 .Path((_, _, _) => "OrderPos")
                 .Create("OrderPos");
 
@@ -342,11 +464,23 @@ namespace SevDeskConnector
             //### Stream for CommunicationWay 
             //###################################################
             var communicationWayImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("CommunicationWay", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("CommunicationWay", "contact,key,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["main"] = jsonObject["main"]?.ToString() != "0"; // convert strint to bool
+                        jsonElements.Add(jsonObject.AsJsonElement());
+                    }
+                    return jsonElements;
+                })
                 .Path((_, _, _) => "CommunicationWay")
                 .Create("CommunicationWay");
 
@@ -354,11 +488,23 @@ namespace SevDeskConnector
             //### Stream for CommunicationWay 
             //###################################################
             var partImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
                 .NextPageToken((request, response) => ExtractNextPageTokenResponse(request, response))
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Part", "", nextPageToken, config))
-                .ParseResponse((response, _, _, _) => GetJsonElements(response))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Part", "category,unity,sevClient", nextPageToken, config))
+                .ParseResponse((response, _, _, _) =>
+                {
+                    List<JsonElement> jsonElements = new List<JsonElement>();
+                    GetJsonObjects(response, out var listJson);
+                    foreach (var jsonObject in listJson)
+                    {
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
+                        jsonObject["stockEnabled"] = jsonObject["stockEnabled"]?.ToString() != "0"; // convert strint to bool
+                        jsonElements.Add(jsonObject.AsJsonElement());
+                    }
+                    return jsonElements;
+                })
                 .Path((_, _, _) => "Part")
                 .Create("Part");
 
@@ -366,6 +512,7 @@ namespace SevDeskConnector
             //### Stream for CommunicationWay 
             //###################################################
             var emailImpl = baseImpl
+                // TODO incremental sync
                 //.GetUpdatedState((_, _) => currentstate.AsJsonElement())
                 //.CursorField(new[] { "create" })
 
@@ -393,17 +540,7 @@ namespace SevDeskConnector
                    { 
                         //JObject header = (JObject)jsonObject.SelectToken("Object.id");
                         //header.Property("ConversionValue").Remove();
-                        //jsonObject.Remove("objectName");
-                        jsonObject.Remove("additionalInformation");
-                        //jsonObject.Remove("create");
-                        //jsonObject.Remove("update");
-                        //jsonObject.Remove("object");
-                        //jsonObject.Remove("from");
-                        //jsonObject.Remove("to");
-                        //jsonObject.Remove("subject");
-                        //jsonObject.Remove("text");
-                        //jsonObject.Remove("sevClient");
-
+                        jsonObject.Remove("additionalInformation"); // not in SevDesk's api docu
                         jsonElements.Add(jsonObject.AsJsonElement());
                    }
                    return jsonElements;
@@ -416,7 +553,7 @@ namespace SevDeskConnector
                 // <param name="streamslice"></param>
                 // <param name="nextpagetoken"></param>
                 // <returns></returns>
-                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Email", "object", nextPageToken, config))
+                .RequestParams((_, _, nextPageToken) => BuildQueryParams("Email", "sevClient", nextPageToken, config))
                 // <summary>
                 // Returns the URL path for the API endpoint e.g: if you wanted to hit https://myapi.com/v1/some_entity then this should return "some_entity"
                 // Defaults to {UrlBase}/{Name} where Name is the name of this stream
@@ -444,12 +581,5 @@ namespace SevDeskConnector
                 emailImpl
             };
         }
-    }
-
-    [JsonObject]
-    public class Email
-    {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
     }
 }

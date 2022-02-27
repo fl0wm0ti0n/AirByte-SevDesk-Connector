@@ -87,7 +87,7 @@
     "main": {
       "description": "Defines whether the communication way is the main communication way for the contact.",
       "type": "boolean",
-      "example": 0,
+      "example": "0",
       "nullable": true
     },
     "sevClient": {

@@ -84,9 +84,7 @@
     },
     "name": {
       "description": "Name of the article/part.",
-      "type": "number",
-      "format": "float",
-      "default": null,
+      "type": "string",
       "example": "Dragonglass",
       "nullable": true
     },

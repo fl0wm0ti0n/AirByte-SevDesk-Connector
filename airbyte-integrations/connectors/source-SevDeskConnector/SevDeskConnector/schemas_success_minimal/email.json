@@ -1,0 +1,81 @@
+{
+  "required": [
+    "from",
+    "to",
+    "subject"
+  ],
+  "properties": {
+    "id": {
+      "description": "The email id",
+      "type": "string"
+    },
+    "objectName": {
+      "description": "The email object name",
+      "type": "string"
+    },
+    "create": {
+      "description": "Date of mail creation",
+      "type": "string",
+      "format": "date-time"
+    },
+    "update": {
+      "description": "Date of last mail update",
+      "type": "string",
+      "format": "date-time"
+    },
+    "object": {
+      "description": "The contact used in the invoice",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the object",
+          "type": "string"
+        },
+        "objectName": {
+          "description": "Model name, which is 'Invoice' or 'Order' or 'CreditNote'",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "from": {
+      "description": "The sender of the email",
+      "type": "string"
+    },
+    "to": {
+      "description": "The recipient of the email",
+      "type": "string"
+    },
+    "subject": {
+      "description": "The subject of the email",
+      "type": "string"
+    },
+    "text": {
+      "description": "The text of the email",
+      "type": "string"
+    },
+    "sevClient": {
+      "description": "Client to which mail belongs. Will be filled automatically",
+      "required": [
+        "id",
+        "objectName"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the client",
+          "type": "string"
+        },
+        "objectName": {
+          "description": "Model name, which is 'SevClient'",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
