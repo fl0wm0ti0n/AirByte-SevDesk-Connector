@@ -12,13 +12,15 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Build the Docker image
-      run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:$(date +%s)
+      env:
+        VERSION: $(date +%s)
+      run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:$VERSION
     - name: docker loogin
       env:
         DOCKER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
       run: docker login ghcr.io -u fl0wm0ti0n -p $DOCKER_TOKEN
     - name: tag container in ghcr.io
-      run: docker tag fl0wm0ti0n/airbyte-sevdesk-source-connector:latest ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:latest
+      run: docker tag fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION
     - name: docker container push
-      run: docker push ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:latest
+      run: docker push ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION
