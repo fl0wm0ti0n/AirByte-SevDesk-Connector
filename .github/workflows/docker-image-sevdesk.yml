@@ -14,13 +14,13 @@ jobs:
     - name: Build the Docker image
       env:
         VERSION: "v1.14"
-      run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:$VERSION
+      run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:v1.14
     - name: docker loogin
       env:
         DOCKER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
       run: docker login ghcr.io -u fl0wm0ti0n -p $DOCKER_TOKEN
     - name: tag container in ghcr.io
-      run: docker tag fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION
+      run: docker tag fl0wm0ti0n/airbyte-sevdesk-source-connector:v1.14 ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:v1.14
     - name: docker container push
-      run: docker push ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:$VERSION
+      run: docker push ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:v1.14
