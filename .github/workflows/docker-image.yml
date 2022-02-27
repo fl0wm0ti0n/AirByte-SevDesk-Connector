@@ -14,6 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: change dir
+      run:  cd SevDeskConnector    
     - name: Build the Docker image
-      run:  cd SevDeskConnector
-            docker build . --file Dockerfile --tag airbyte-sevdesk-source-connector:$(date +%s)
+      run:  docker build . --file Dockerfile --tag airbyte-sevdesk-source-connector:$(date +%s)
