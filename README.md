@@ -12,40 +12,39 @@ sevdesk api documentation is totaly wrong and they sometimes deliver string inbs
 the connector handles this issues right now but sevdesk said they update their api sometimes, if this happens this connector will have errors. i will fix this asap if i know about the new issues.
 
 ### open TODOs
-incremental sync
-embedded shemas needs to be created -> see options "query_embedded"
-
+*  icremental sync
+*  shemas for embedded api results needs to be created -> see options "query_embedded"
 
 ### Following options are possible to be configured for this connector
-"start_date":
+"start_date":\
 "description": "Start getting data from that date."
 
-"api_token":
+"api_token":\
 "description": "API Token you got from SevDesk"
 
-"base_url":
+"base_url":\
 "description": "API Token you got from SevDesk"
 
-"back_off_time":
+"back_off_time":\
 "description": "Backofftime, default 10."
 
-"checkpoint_interval":
+"checkpoint_interval":\
 "description": "The AirbyteStateMessage is sent based on the StateCheckpointInterval setting of a stream object. Every N number of requests will result in sending out an AirbyteStateMessage"
 
-"max_retries":
+"max_retries":\
 "description": "Maximal retries before it stops"
 
-"connection_check_api": {
+"connection_check_api":\
 "description": "api Endpoint like 'Voucher' from 'https://my.sevdesk.de/api/v1/Voucher'"
 
-"query_embedded":
+"query_embedded":\
 "description": "activate it, if you want detailed output of nested objects. Leads to a massive increase of the amount of data. Good if you want to have all data linked together since BigQuery normalization doesn't support to link all streams together as the IDs of the streams would suggest it"
 
-"query_limit":
+"query_limit":\
 "description": "Limits the number of entries that are returned.Most useful in GET requests which will most likely deliver big sets of data like country or currency lists. In this case, you can bypass the default limitation on returned entries by providing a high number."
 
-"query_offset":
+"query_offset":\
 "description": "Specifies a certain offset for the data that will be returned. As an example, you can specify 'offset=2 if you want all entries except for the first two."
         
-"cursor_based_pagination":
+"cursor_based_pagination":\
 "description": "If the api will support cursor-based pagination in the future"
