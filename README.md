@@ -2,21 +2,21 @@
 
 [![Docker Image CI](https://github.com/fl0wm0ti0n/AirByte-SevDesk-Connector/actions/workflows/docker-image-sevdesk.yml/badge.svg)](https://github.com/fl0wm0ti0n/AirByte-SevDesk-Connector/actions/workflows/docker-image-sevdesk.yml)
 
-## important links
+### important links
 This Airbyte Connector is built for https://sevdesk.de/
 SevDesk Api Documentation will be found here https://hilfe.sevdesk.de/de/knowledge/sevdesk-rest-full-api
 all Infos about Airbyte will be found at https://airbyte.com/
 
-## hints
+### hints
 sevdesk api documentation is totaly wrong and they sometimes deliver string inbstead of float or fields which arent described in the docu. 
 the connector handles this issues right now but sevdesk said they update their api sometimes, if this happens this connector will have errors. i will fix this asap if i know about the new issues.
 
-## open TODOs
-. incremental sync
-. embedded shemas needs to be created -> see options "query_embedded"
+### open TODOs
+incremental sync
+embedded shemas needs to be created -> see options "query_embedded"
 
 
-## Following options are possible to be configured for this connector
+### Following options are possible to be configured for this connector
 "start_date":
 "description": "Start getting data from that date."
 
