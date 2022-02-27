@@ -14,10 +14,10 @@ jobs:
     - name: Build the Docker image
       run:  docker build ./SevDeskConnector/ --tag airbyte-sevdesk-source-connector:$(date +%s)
     - name: docker loogin
-     # env:
-      #  DOCKER_USER: ${{ secrets.DOCKER_USER}}
+      env:
+        DOCKER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u fl0wm0ti0n -password-stdin
+      run: echo $DOCKER_TOKEN | docker login ghcr.io -u fl0wm0ti0n -password-stdin
     - name: tag container in ghcr.io
       run: docker tag app ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:latest
     - name: docker container push
