@@ -5,18 +5,18 @@
 ### Last Docker Image 
 ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:v1.14
 
-### important links
+### Important links
 This Airbyte Connector is built for https://sevdesk.de/
 SevDesk Api Documentation will be found here https://hilfe.sevdesk.de/de/knowledge/sevdesk-rest-full-api
 all Infos about Airbyte will be found at https://airbyte.com/
 
-### hints
+### Hints
 sevdesk api documentation is totaly wrong and they sometimes deliver string inbstead of float or fields which arent described in the docu. 
 the connector handles this issues right now but sevdesk said they update their api sometimes, if this happens this connector will have errors. i will fix this asap if i know about the new issues.
 
-### open TODOs
-*  icremental sync
-*  shemas for embedded api results needs to be created -> see options "query_embedded"
+### Open TODOs
+*  incremental sync
+*  schemas for embedded api results needs to be created -> see options "query_embedded"
 
 ### Following options are possible to be configured for this connector
 "start_date":\
