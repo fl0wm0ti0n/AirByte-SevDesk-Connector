@@ -1,0 +1,13 @@
+{
+  "start_date": "2021-05-05",
+  "api_token": "ebe9b07e2f4ac82fe566643b1826fe95",
+  "base_url": "https://my.sevdesk.de/api/v1",
+  "back_off_time": 10,
+  "checkpoint_interval": 25,
+  "max_retries": 15,
+  "connection_check_api": "Voucher",
+  "query_embedded": 0,
+  "query_limit": 1000,
+  "query_offset": 0,
+  "cursor_based_pagination": 0
+}
