@@ -6,10 +6,10 @@
 ghcr.io/fl0wm0ti0n/airbyte-sevdesk-source-connector:v1.14
 
 ### Important links
-This Airbyte Connector is built for https://sevdesk.de/
-SevDesk Api Documentation will be found here https://hilfe.sevdesk.de/de/knowledge/sevdesk-rest-full-api
-All Infos about Airbyte will be found at https://airbyte.com/
-The Connector is built with the C# CDK which you can find here https://github.com/mrhamburg/airbyte.cdk.dotnet
+* This Airbyte Connector is built for https://sevdesk.de/
+* SevDesk Api Documentation will be found here https://hilfe.sevdesk.de/de/knowledge/sevdesk-rest-full-api
+* All Infos about Airbyte will be found at https://airbyte.com/
+* The Connector is built with the C# CDK which you can find here https://github.com/mrhamburg/airbyte.cdk.dotnet
 
 ### Hints
 sevdesk api documentation is totaly wrong and they sometimes deliver string inbstead of float or fields which arent described in the docu. 
